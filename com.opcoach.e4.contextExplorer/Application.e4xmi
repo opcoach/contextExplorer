@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_wInbEJTOEeKQcawqaJzSiQ" elementId="org.eclipse.e4.ide.application" bindingContexts="_wIoCIJTOEeKQcawqaJzSiQ">
+  <children xsi:type="basic:TrimmedWindow" xmi:id="_wInbEZTOEeKQcawqaJzSiQ" selectedElement="_JkDdMJTbEeKQcawqaJzSiQ" label="Context Explorer" iconURI="platform:/plugin/com.opcoach.e4.contextExplorer/icons/inject.png" x="100" y="100" width="900" height="1000">
+    <children xsi:type="advanced:PerspectiveStack" xmi:id="_JkDdMJTbEeKQcawqaJzSiQ" elementId="com.opcoach.e4.contextexplorer.perspectivestack.0">
+      <children xsi:type="advanced:Perspective" xmi:id="_K5vdwJTbEeKQcawqaJzSiQ" elementId="com.opcoach.e4.contextexplorer.perspective.0" label="Context Perspective">
+        <children xsi:type="basic:Part" xmi:id="_PeM2gJTSEeKQcawqaJzSiQ" elementId="com.opcoach.e4.contextexplorer.part.0" contributionURI="bundleclass://com.opcoach.e4.contextExplorer/com.opcoach.e4.contextExplorer.parts.ContextExplorerPart" label="Context Explorer" iconURI="platform:/plugin/com.opcoach.e4.contextExplorer/icons/inject.png"/>
+      </children>
+    </children>
+    <mainMenu xmi:id="_wIoCMJTOEeKQcawqaJzSiQ" elementId="menu:org.eclipse.ui.main.menu">
+      <children xsi:type="menu:Menu" xmi:id="_wIoCMZTOEeKQcawqaJzSiQ" label="File">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_wIopMZTOEeKQcawqaJzSiQ" label="Quit" command="_wIoCI5TOEeKQcawqaJzSiQ"/>
+      </children>
+      <children xsi:type="menu:Menu" xmi:id="_wIopMpTOEeKQcawqaJzSiQ" label="Help">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_wIopM5TOEeKQcawqaJzSiQ" label="About" command="_wIoCLZTOEeKQcawqaJzSiQ"/>
+      </children>
+    </mainMenu>
+  </children>
+  <handlers xmi:id="_wIoCJJTOEeKQcawqaJzSiQ" contributionURI="bundleclass://com.opcoach.e4.contextExplorer/com.opcoach.e4.contextExplorer.handlers.QuitHandler" command="_wIoCI5TOEeKQcawqaJzSiQ"/>
+  <handlers xmi:id="_wIoCLpTOEeKQcawqaJzSiQ" contributionURI="bundleclass://com.opcoach.e4.contextExplorer/com.opcoach.e4.contextExplorer.handlers.AboutHandler" command="_wIoCLZTOEeKQcawqaJzSiQ"/>
+  <bindingTables xmi:id="_wIoCJZTOEeKQcawqaJzSiQ" bindingContext="_wIoCIJTOEeKQcawqaJzSiQ">
+    <bindings xmi:id="_wIoCJpTOEeKQcawqaJzSiQ" keySequence="M1+Q" command="_wIoCI5TOEeKQcawqaJzSiQ"/>
+    <bindings xmi:id="_wIoCKZTOEeKQcawqaJzSiQ" keySequence="M1+O"/>
+    <bindings xmi:id="_wIoCLJTOEeKQcawqaJzSiQ" keySequence="M1+S"/>
+    <bindings xmi:id="_wIoCL5TOEeKQcawqaJzSiQ" keySequence="M1+A" command="_wIoCLZTOEeKQcawqaJzSiQ"/>
+  </bindingTables>
+  <rootContext xmi:id="_wIoCIJTOEeKQcawqaJzSiQ" elementId="org.eclipse.ui.contexts.dialogAndWindow" name="In Dialog and Windows">
+    <children xmi:id="_wIoCIZTOEeKQcawqaJzSiQ" elementId="org.eclipse.ui.contexts.window" name="In Windows"/>
+    <children xmi:id="_wIoCIpTOEeKQcawqaJzSiQ" elementId="org.eclipse.ui.contexts.dialog" name="In Dialogs"/>
+  </rootContext>
+  <commands xmi:id="_wIoCI5TOEeKQcawqaJzSiQ" elementId="org.eclipse.ui.file.exit" commandName="quitCommand"/>
+  <commands xmi:id="_wIoCLZTOEeKQcawqaJzSiQ" elementId="org.eclipse.ui.help.aboutAction" commandName="aboutCommand"/>
+  <addons xmi:id="_wInbEpTOEeKQcawqaJzSiQ" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
+  <addons xmi:id="_wInbE5TOEeKQcawqaJzSiQ" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
+  <addons xmi:id="_wInbFJTOEeKQcawqaJzSiQ" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
+  <addons xmi:id="_wInbFZTOEeKQcawqaJzSiQ" elementId="org.eclipse.e4.ui.workbench.commands.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon"/>
+  <addons xmi:id="_wInbFpTOEeKQcawqaJzSiQ" elementId="org.eclipse.e4.ui.workbench.contexts.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon"/>
+  <addons xmi:id="_wInbF5TOEeKQcawqaJzSiQ" elementId="org.eclipse.e4.ui.workbench.bindings.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon"/>
+  <addons xmi:id="_pEHKoJTbEeKQcawqaJzSiQ" elementId="com.opcoach.e4.contextexplorer.addon.0" contributionURI="bundleclass://com.opcoach.e4.contextExplorer/com.opcoach.e4.contextExplorer.addon.SampleAddon"/>
+</application:Application>
