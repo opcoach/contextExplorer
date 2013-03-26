@@ -1,7 +1,7 @@
 contextExplorer
 ===============
 
-A context Explorer for Eclipse 4
+A context Explorer for Eclipse 4 provided by OPCoach
 
 Just checkout this project in your workspace, make your project depend on it optionaly, and you can add the :
 
