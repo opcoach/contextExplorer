@@ -9,7 +9,7 @@ public class PostContextInitializer
 	@PostContextCreate
 	public void initialiseContext(IEclipseContext ctx)
 	{
-		System.out.println("Met ˆ jour le contexte au post context create");
+		System.out.println("Update context when PostContextCreate");
 		ctx.set(getClass().getName(), this);
 	}
 	
