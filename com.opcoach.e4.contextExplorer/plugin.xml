@@ -15,7 +15,7 @@
          
          <property
                name="appName"
-               value="Content Explorer">
+               value="com.opcoach.e4.contextExplorer">
          </property>
          <property
                name="applicationXMI"
