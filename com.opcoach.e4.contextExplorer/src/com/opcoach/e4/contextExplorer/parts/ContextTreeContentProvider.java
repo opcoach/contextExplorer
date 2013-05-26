@@ -1,6 +1,7 @@
 package com.opcoach.e4.contextExplorer.parts;
 
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
