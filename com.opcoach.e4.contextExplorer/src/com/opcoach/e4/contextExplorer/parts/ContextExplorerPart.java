@@ -24,6 +24,7 @@ import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -34,11 +35,16 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.Text;
 
 public class ContextExplorerPart
 {
@@ -49,6 +55,11 @@ public class ContextExplorerPart
 
 	@Inject
 	private ESelectionService selService;
+	
+	
+	/** Store the prefix used to highlight objects in the table */
+	private String prefixForColor = "com.";
+	
 
 	public ContextExplorerPart()
 	{
@@ -60,13 +71,22 @@ public class ContextExplorerPart
 	@PostConstruct
 	public void createControls(Composite parent, MApplication a)
 	{
-
+		parent.setLayout(new GridLayout(1,false));
+		
+		// Create a sahsform with the tree in the top part
+		// And a composite in the bottom part, containing another composite for the color filter and a table viewer : 
+		// parent
+		//    SashForm
+		//      TreeViewer
+		//      Composite
+		//         Composite for color filter
+		//         TableViewer
+		
 		SashForm sashForm = new SashForm(parent, SWT.VERTICAL);
+		sashForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		// TreeViewer on the top
 		tv = new TreeViewer(sashForm);
-		
-
 		tv.setContentProvider(new ContextTreeContentProvider());
 		tv.setLabelProvider(new ContextLabelProvider());
 		tv.setInput(a);
@@ -82,31 +102,63 @@ public class ContextExplorerPart
 
 			}
 		});
-
-		createContextContentTable(a, sashForm);
 		
+		// The composite for the bottom of sahsform
+		Composite bottom =  new Composite(sashForm, SWT.NONE);
+		bottom.setLayout(new GridLayout(1,false));
+		bottom.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		
+		// The composite to manage the color filter
+		final Composite comp = new Composite(bottom, SWT.NONE);
+		comp.setLayout(new GridLayout(2, false));
+		Label title = new Label(comp, SWT.NONE);
+		title.setText("Prefix used for color :");
+		final Text colorFilter = new Text(comp, SWT.BORDER);
+		colorFilter.setText(prefixForColor);
+		GridDataFactory.fillDefaults().hint(180, SWT.DEFAULT).applyTo(colorFilter);
+		colorFilter.addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyReleased(KeyEvent e)
+			{
+				// Update the text for prefixForColor and refresh the table
+				prefixForColor = colorFilter.getText();
+				contentTable.refresh(true);
+				
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) { // Nothing to do 
+				}
+			});
+		
+		// Create the table in bottom
+		createContextContentTable(a, bottom);
+	
 		// Set the correct weight for sahsform
-		sashForm.setWeights(new int[] { 15, 85 });
+		sashForm.setWeights(new int[] { 20, 80 });
 
 
 	}
 
-	private void createContextContentTable(MApplication a, SashForm sashForm)
+	
+
+	private void createContextContentTable(MApplication a, Composite parent)
 	{
-		contentTable = new TableViewer(sashForm);
+		contentTable = new TableViewer(parent);
 		contentTable.setContentProvider(new ContextTableContentProvider());
 
 		// Create the table with 2 columns: key and value
 		final Table cTable = contentTable.getTable();
 		cTable.setHeaderVisible(true);
 		cTable.setLinesVisible(true);
-		GridData gd_cTable = new GridData(SWT.FILL);
-		gd_cTable.verticalAlignment = SWT.TOP;
+		GridData gd_cTable = new GridData(SWT.FILL, SWT.FILL, true, true);
+		//gd_cTable.verticalAlignment = SWT.TOP;
 		cTable.setLayoutData(gd_cTable);
 
 		// Create the first column for firstname
 		TableViewerColumn firstNameCol = new TableViewerColumn(contentTable, SWT.NONE);
-		firstNameCol.getColumn().setWidth(400);
+		firstNameCol.getColumn().setWidth(250);
 		firstNameCol.getColumn().setText("Key");
 		firstNameCol.setLabelProvider(new ColumnLabelProvider() {
 			@Override
@@ -119,7 +171,8 @@ public class ContextExplorerPart
 			public Color getForeground(Object element)
 			{
 				String s = ((Map.Entry<String, Object>) element).getKey();
-				return (s.startsWith("com.opcoach")) ? Display.getCurrent().getSystemColor(SWT.COLOR_BLUE) : null;
+				boolean color = (prefixForColor.length() > 0) && s.startsWith(prefixForColor);
+				return color ? Display.getCurrent().getSystemColor(SWT.COLOR_BLUE) : null;
 			}
 		});
 
@@ -139,6 +192,7 @@ public class ContextExplorerPart
 		// Set input data and content provider (default ArrayContentProvider)
 		contentTable.setSorter(new ViewerSorter());
 		contentTable.setInput(a.getContext().getParent());
+		
 	}
 
 	@Inject
@@ -158,5 +212,6 @@ public class ContextExplorerPart
 	@Focus
 	public void setFocus()
 	{
+		tv.getTree().setFocus();
 	}
 }
