@@ -25,6 +25,8 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -32,19 +34,24 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
+import org.osgi.framework.Bundle;
 
 public class ContextExplorerPart
 {
@@ -56,14 +63,25 @@ public class ContextExplorerPart
 	@Inject
 	private ESelectionService selService;
 	
+	private ContextViewerFilter filter;
 	
 	/** Store the prefix used to highlight objects in the table */
 	private String prefixForColor = "com.";
 	
+	private ImageRegistry imgReg;
+	
 
-	public ContextExplorerPart()
+	@Inject
+	private void initializeImageRegistry()
 	{
+		Bundle b = org.eclipse.core.runtime.Platform.getBundle("com.opcoach.e4.contextExplorer");
+		imgReg = new ImageRegistry();
+		imgReg.put("collapseall", ImageDescriptor.createFromURL(b.getEntry("icons/collapseall.gif")));
+		imgReg.put("expandall", ImageDescriptor.createFromURL(b.getEntry("icons/expandall.gif")));
 	}
+	
+	
+
 
 	/**
 	 * Create contents of the view part.
@@ -73,48 +91,42 @@ public class ContextExplorerPart
 	{
 		parent.setLayout(new GridLayout(1,false));
 		
-		// Create a sahsform with the tree in the top part
-		// And a composite in the bottom part, containing another composite for the color filter and a table viewer : 
-		// parent
-		//    SashForm
-		//      TreeViewer
-		//      Composite
-		//         Composite for color filter
-		//         TableViewer
+		// borderColor = new Color(parent.getDisplay(), 170, 176, 191);
+		final Composite comp = new Composite(parent, SWT.NONE);
+		comp.setLayout(new GridLayout(5, false));
 		
-		SashForm sashForm = new SashForm(parent, SWT.VERTICAL);
-		sashForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
-		// TreeViewer on the top
-		tv = new TreeViewer(sashForm);
-		tv.setContentProvider(new ContextTreeContentProvider());
-		tv.setLabelProvider(new ContextLabelProvider());
-		tv.setInput(a);
-		tv.expandAll();
-
-		tv.addSelectionChangedListener(new ISelectionChangedListener() {
-
+		Button expandAll = new Button(comp, SWT.FLAT);
+		expandAll.setImage(imgReg.get("expandall"));
+		expandAll.addSelectionListener(new SelectionListener() {
+			
 			@Override
-			public void selectionChanged(SelectionChangedEvent event)
+			public void widgetSelected(SelectionEvent e)
 			{
-				IStructuredSelection ss = (IStructuredSelection) event.getSelection();
-				selService.setSelection((ss.size() == 1) ? ss.getFirstElement() : ss.toArray());
-
+				tv.expandAll();
 			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) { }
+		});
+		Button collapseAll = new Button(comp, SWT.FLAT);
+		collapseAll.setImage(imgReg.get("collapseall"));
+		collapseAll.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
+				tv.collapseAll();
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) { }
 		});
 		
-		// The composite for the bottom of sahsform
-		Composite bottom =  new Composite(sashForm, SWT.NONE);
-		bottom.setLayout(new GridLayout(1,false));
-		bottom.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		
-		// The composite to manage the color filter
-		final Composite comp = new Composite(bottom, SWT.NONE);
-		comp.setLayout(new GridLayout(2, false));
 		Label title = new Label(comp, SWT.NONE);
 		title.setText("Prefix used for color :");
 		final Text colorFilter = new Text(comp, SWT.BORDER);
 		colorFilter.setText(prefixForColor);
+		colorFilter.setToolTipText("Enter here the prefix to be highlighted in table");
 		GridDataFactory.fillDefaults().hint(180, SWT.DEFAULT).applyTo(colorFilter);
 		colorFilter.addKeyListener(new KeyListener() {
 			
@@ -132,33 +144,79 @@ public class ContextExplorerPart
 				}
 			});
 		
-		// Create the table in bottom
-		createContextContentTable(a, bottom);
+		// Do the search widget
+		filter = new ContextViewerFilter();
+		final Text text = new Text(comp, SWT.SEARCH | SWT.ICON_SEARCH);
+		GridDataFactory.fillDefaults().hint(130, SWT.DEFAULT).applyTo(text);
+		text.setMessage("Search data");
+		text.addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyReleased(KeyEvent e)
+			{
+				filter.setPattern(text.getText());	
+				tv.refresh(true);
+				contentTable.refresh(true);
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e)
+			{
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
 	
+		SashForm sashForm = new SashForm(parent, SWT.VERTICAL);
+		sashForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+		// TreeViewer on the top
+		tv = new TreeViewer(sashForm);
+		tv.setContentProvider(new ContextTreeContentProvider());
+		tv.setLabelProvider(new ContextLabelProvider());
+		tv.setFilters(new ViewerFilter[] { filter});
+		tv.setInput(a);
+		tv.expandAll();
+
+		tv.addSelectionChangedListener(new ISelectionChangedListener() {
+
+			@Override
+			public void selectionChanged(SelectionChangedEvent event)
+			{
+				IStructuredSelection ss = (IStructuredSelection) event.getSelection();
+				selService.setSelection((ss.size() == 1) ? ss.getFirstElement() : ss.toArray());
+
+			}
+		});
+
+		createContextContentTable(a, sashForm);
+	
+		
 		// Set the correct weight for sahsform
-		sashForm.setWeights(new int[] { 20, 80 });
+		sashForm.setWeights(new int[] { 15, 85 });
 
 
 	}
 
 	
 
-	private void createContextContentTable(MApplication a, Composite parent)
+	private void createContextContentTable(MApplication a, SashForm sashForm)
 	{
-		contentTable = new TableViewer(parent);
+		contentTable = new TableViewer(sashForm);
 		contentTable.setContentProvider(new ContextTableContentProvider());
 
 		// Create the table with 2 columns: key and value
 		final Table cTable = contentTable.getTable();
 		cTable.setHeaderVisible(true);
 		cTable.setLinesVisible(true);
-		GridData gd_cTable = new GridData(SWT.FILL, SWT.FILL, true, true);
-		//gd_cTable.verticalAlignment = SWT.TOP;
+		GridData gd_cTable = new GridData(SWT.FILL);
+		gd_cTable.verticalAlignment = SWT.TOP;
 		cTable.setLayoutData(gd_cTable);
 
 		// Create the first column for firstname
 		TableViewerColumn firstNameCol = new TableViewerColumn(contentTable, SWT.NONE);
-		firstNameCol.getColumn().setWidth(250);
+		firstNameCol.getColumn().setWidth(400);
 		firstNameCol.getColumn().setText("Key");
 		firstNameCol.setLabelProvider(new ColumnLabelProvider() {
 			@Override
@@ -193,6 +251,7 @@ public class ContextExplorerPart
 		contentTable.setSorter(new ViewerSorter());
 		contentTable.setInput(a.getContext().getParent());
 		
+		contentTable.setFilters(new ViewerFilter[] { filter});
 	}
 
 	@Inject
@@ -212,6 +271,11 @@ public class ContextExplorerPart
 	@Focus
 	public void setFocus()
 	{
-		tv.getTree().setFocus();
+	}
+	
+	private Map<String, Object> indexes
+	private void initializeSearchMapping()
+	{
+		
 	}
 }
