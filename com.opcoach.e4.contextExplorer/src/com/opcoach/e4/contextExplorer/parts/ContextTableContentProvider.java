@@ -10,12 +10,23 @@
  *******************************************************************************/
 package com.opcoach.e4.contextExplorer.parts;
 
+import javax.inject.Inject;
+
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 public class ContextTableContentProvider implements IStructuredContentProvider
 {
+	
+	@Inject
+	private ContextRegistry contextRegistry;
+	
+	@Inject
+   public ContextTableContentProvider()
+	{
+		
+	}
 
 	@Override
 	public void dispose()
@@ -38,5 +49,6 @@ public class ContextTableContentProvider implements IStructuredContentProvider
 			return ((EclipseContext) inputElement).localData().entrySet().toArray();
 		return null;
 	}
+
 
 }

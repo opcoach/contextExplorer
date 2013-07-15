@@ -10,13 +10,29 @@
  *******************************************************************************/
 package com.opcoach.e4.contextExplorer.parts;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+import javax.inject.Inject;
+
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-public class ContextTreeContentProvider implements ITreeContentProvider
+public class ContextTreeProvider extends LabelProvider implements ITreeContentProvider
 {
+
+	@Inject
+	private ContextRegistry contextRegistry;
+	
+	@Inject
+	public ContextTreeProvider()
+	{
+		
+	}
 
 	@Override
 	public void dispose()
@@ -37,9 +53,9 @@ public class ContextTreeContentProvider implements ITreeContentProvider
 	{
 		if (inputElement instanceof MApplication)
 		{
-			return new Object [] {((MApplication) inputElement).getContext().getParent()};
+			return new Object[] { ((MApplication) inputElement).getContext().getParent() };
 		}
-		
+
 		return new Object[0];
 	}
 
@@ -48,8 +64,30 @@ public class ContextTreeContentProvider implements ITreeContentProvider
 	{
 		if (parentElement instanceof EclipseContext)
 		{
+			Collection<IEclipseContext> result = new ArrayList<IEclipseContext>();
 			EclipseContext ct = (EclipseContext) parentElement;
-			return ct.getChildren().toArray();
+			for (IEclipseContext child : ct.getChildren())
+			{
+				if (contextRegistry.containsText(getText(child)))
+				{
+					// Keep it anyway...
+					result.add(child);
+				} else
+				{
+					// Must check if one of the table elements could contain the
+					// string
+					for (Object o : ((EclipseContext) child).localData().values())
+					{
+						if ((o != null) && contextRegistry.containsText(o.toString()))
+						{
+							result.add(child);
+							break;
+						}
+					}
+
+				}
+			}
+			return result.toArray();
 		}
 		return null;
 	}
@@ -65,6 +103,20 @@ public class ContextTreeContentProvider implements ITreeContentProvider
 	public boolean hasChildren(Object element)
 	{
 		return true;
+		
+	/*	if (element instanceof EclipseContext)
+		{
+			EclipseContext ct = (EclipseContext) element;
+			return (ct.getChildren().size() > 0);
+		}
+		return false; */
+
+	}
+
+	@Override
+	public String getText(Object element)
+	{
+		return super.getText(element);
 	}
 
 }
