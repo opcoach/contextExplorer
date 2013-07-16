@@ -10,28 +10,31 @@
  *******************************************************************************/
 package com.opcoach.e4.contextExplorer.parts;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.widgets.Display;
 
-public class ContextTreeProvider extends LabelProvider implements ITreeContentProvider
+import com.opcoach.e4.contextExplorer.search.ContextRegistry;
+
+public class ContextTreeProvider extends LabelProvider implements ITreeContentProvider, IColorProvider
 {
 
 	@Inject
 	private ContextRegistry contextRegistry;
-	
+
 	@Inject
 	public ContextTreeProvider()
 	{
-		
+
 	}
 
 	@Override
@@ -64,30 +67,7 @@ public class ContextTreeProvider extends LabelProvider implements ITreeContentPr
 	{
 		if (parentElement instanceof EclipseContext)
 		{
-			Collection<IEclipseContext> result = new ArrayList<IEclipseContext>();
-			EclipseContext ct = (EclipseContext) parentElement;
-			for (IEclipseContext child : ct.getChildren())
-			{
-				if (contextRegistry.containsText(getText(child)))
-				{
-					// Keep it anyway...
-					result.add(child);
-				} else
-				{
-					// Must check if one of the table elements could contain the
-					// string
-					for (Object o : ((EclipseContext) child).localData().values())
-					{
-						if ((o != null) && contextRegistry.containsText(o.toString()))
-						{
-							result.add(child);
-							break;
-						}
-					}
-
-				}
-			}
-			return result.toArray();
+			return ((EclipseContext) parentElement).getChildren().toArray();
 		}
 		return null;
 	}
@@ -102,21 +82,30 @@ public class ContextTreeProvider extends LabelProvider implements ITreeContentPr
 	@Override
 	public boolean hasChildren(Object element)
 	{
-		return true;
-		
-	/*	if (element instanceof EclipseContext)
-		{
-			EclipseContext ct = (EclipseContext) element;
-			return (ct.getChildren().size() > 0);
-		}
-		return false; */
-
+		return ((element instanceof EclipseContext) && !(((EclipseContext) element).getChildren().isEmpty()));
 	}
 
 	@Override
 	public String getText(Object element)
 	{
 		return super.getText(element);
+	}
+
+	@Override
+	public Color getForeground(Object element)
+	{
+		// Return a color if a text contained in this node containes the text.
+		if (element instanceof IEclipseContext && contextRegistry.containsText((IEclipseContext) element))
+		{
+			return Display.getCurrent().getSystemColor(SWT.COLOR_DARK_MAGENTA);
+		}
+		return null;
+	}
+
+	@Override
+	public Color getBackground(Object element)
+	{
+		return null;
 	}
 
 }

@@ -1,4 +1,4 @@
-package com.opcoach.e4.contextExplorer.filterTrees;
+package com.opcoach.e4.contextExplorer.search;
 
 /*******************************************************************************
  * Copyright (c) 2000, 2006 IBM Corporation and others.

@@ -16,6 +16,8 @@ import org.eclipse.e4.core.internal.contexts.EclipseContext;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
+import com.opcoach.e4.contextExplorer.search.ContextRegistry;
+
 public class ContextTableContentProvider implements IStructuredContentProvider
 {
 	

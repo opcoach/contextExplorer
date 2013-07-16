@@ -51,6 +51,8 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.osgi.framework.Bundle;
 
+import com.opcoach.e4.contextExplorer.search.ContextRegistry;
+
 public class ContextExplorerPart
 {
 
@@ -152,6 +154,7 @@ public class ContextExplorerPart
 		final Text text = new Text(comp, SWT.SEARCH | SWT.ICON_SEARCH);
 		GridDataFactory.fillDefaults().hint(250, SWT.DEFAULT).applyTo(text);
 		text.setMessage("Search data");
+		text.setToolTipText("Highlight the contexts where contained objects contains this string pattern");
 		text.addKeyListener(new KeyListener() {
 
 			@Override
@@ -195,8 +198,6 @@ public class ContextExplorerPart
 
 		// Set the correct weight for sahsform
 		sashForm.setWeights(new int[] { 15, 85 });
-
-		initializeContextRegistry();
 
 		// Open all the tree
 		tv.expandAll();
@@ -258,33 +259,5 @@ public class ContextExplorerPart
 		tv.getControl().setFocus();
 	}
 
-	private void initializeContextRegistry()
-	{
-		Map<Object, String> indexes = new HashMap<Object, String>();
-		// iterate on all objects of tree and store it in map.
-		MApplication start = (MApplication) tv.getInput();
-		fillSearchMapping(indexes, (EclipseContext) start.getContext().getParent());
-		
-		contextRegistry.setIndexes(indexes);
-
-	}
-
-	private void fillSearchMapping(Map<Object, String> indexes, EclipseContext ctx)
-	{
-		indexes.put(ctx, ctx.toString());
-		
-		// Loop on object content
-		for (Map.Entry<String, Object> entry : ctx.localData().entrySet())
-		{
-			
-		}
-		
-		
-		// Loop on child content
-		for (EclipseContext child : ((EclipseContext) ctx).getChildren())
-		{
-			fillSearchMapping(indexes, child);
-		}
-	}
-
+	
 }
