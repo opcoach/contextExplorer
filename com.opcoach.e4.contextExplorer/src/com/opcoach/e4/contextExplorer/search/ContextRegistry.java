@@ -26,9 +26,10 @@ import org.eclipse.e4.core.services.log.Logger;
 public class ContextRegistry
 {
 
-	@Inject Logger log;
-	
-	private StringMatcher matcher; 
+	@Inject
+	Logger log;
+
+	private StringMatcher matcher;
 
 	/** The map of all the strings available in all contexts */
 	private Map<IEclipseContext, Collection<String>> indexes;
@@ -47,7 +48,9 @@ public class ContextRegistry
 
 	public void setPattern(String newPattern)
 	{
-		matcher = new StringMatcher(newPattern, false, false); // ignore case but not wildcards
+		matcher = new StringMatcher(newPattern, false, false); // ignore case
+																// but not
+																// wildcards
 	}
 
 	/**
@@ -61,7 +64,7 @@ public class ContextRegistry
 
 		Collection<String> values = indexes.get(ctx);
 		log.warn("Voir ici si le nombre de string attendues a changé, car on ne peut pas écouter le contexte");
-		if (values == null) 
+		if (values == null)
 		{
 			values = computeValues(ctx);
 			indexes.put(ctx, values);
@@ -79,15 +82,14 @@ public class ContextRegistry
 		}
 		return found;
 	}
-	
-	
-	
+
 	public boolean matchText(String text)
 	{
 		return (matcher != null) && matcher.match(text);
 	}
-	
-	/** Extract all string values in context
+
+	/**
+	 * Extract all string values in context
 	 * 
 	 * @param ctx
 	 * @return
@@ -101,10 +103,11 @@ public class ContextRegistry
 			for (Map.Entry<String, Object> entry : ((EclipseContext) ctx).localData().entrySet())
 			{
 				result.add(entry.getKey().toString());
-				result.add(entry.getValue().toString());
+				Object value = entry.getValue();
+				if (value != null)
+					result.add(value.toString());
 			}
-		}
-		else
+		} else
 		{
 			log.warn("Warning : the received EclipseContext has not the expected type. It is a : " + ctx.getClass().toString());
 		}
