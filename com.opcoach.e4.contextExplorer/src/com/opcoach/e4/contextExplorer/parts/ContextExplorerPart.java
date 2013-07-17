@@ -154,7 +154,7 @@ public class ContextExplorerPart
 		final Text text = new Text(comp, SWT.SEARCH | SWT.ICON_SEARCH);
 		GridDataFactory.fillDefaults().hint(250, SWT.DEFAULT).applyTo(text);
 		text.setMessage("Search data");
-		text.setToolTipText("Highlight the contexts where contained objects contains this string pattern");
+		text.setToolTipText("Highlight the contexts where contained objects match this string pattern");
 		text.addKeyListener(new KeyListener() {
 
 			@Override

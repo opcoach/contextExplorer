@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
 import org.eclipse.e4.core.services.log.Logger;
@@ -18,12 +19,14 @@ import org.eclipse.e4.core.services.log.Logger;
  * so as to filter the tree the main map contains : an IEclipseContext as a key
  * a list of strings present in this context
  * 
+ * It extends RunAndTrack to be informed of contexts updates
+ * 
  * @author olivier
  * 
  */
 @Creatable
 @Singleton
-public class ContextRegistry
+public class ContextRegistry 
 {
 
 	@Inject
@@ -31,26 +34,15 @@ public class ContextRegistry
 
 	private StringMatcher matcher;
 
-	/** The map of all the strings available in all contexts */
-	private Map<IEclipseContext, Collection<String>> indexes;
 
 	@Inject
 	public ContextRegistry()
 	{
-		System.out.println("Creation du context Registry -> " + this);
-		indexes = new HashMap<IEclipseContext, Collection<String>>();
-	}
-
-	public void setIndexes(Map<IEclipseContext, Collection<String>> indexes)
-	{
-		this.indexes = indexes;
 	}
 
 	public void setPattern(String newPattern)
 	{
-		matcher = new StringMatcher(newPattern, false, false); // ignore case
-																// but not
-																// wildcards
+		matcher = new StringMatcher(newPattern, false, false); // do not ignore case and wildcards
 	}
 
 	/**
@@ -59,17 +51,9 @@ public class ContextRegistry
 	 */
 	public boolean containsText(IEclipseContext ctx)
 	{
-		if (indexes == null)
-			return true;
-
-		Collection<String> values = indexes.get(ctx);
-		log.warn("Voir ici si le nombre de string attendues a changé, car on ne peut pas écouter le contexte");
-		if (values == null)
-		{
-			values = computeValues(ctx);
-			indexes.put(ctx, values);
-		}
-
+		// It is useless to store the values in a map, because context changes everytime and it should be tracked. 
+		Collection<String> values =  computeValues(ctx);
+			
 		// Search for a string matching the pattern
 		boolean found = false;
 		for (String s : values)
@@ -113,5 +97,6 @@ public class ContextRegistry
 		}
 		return result;
 	}
+
 
 }

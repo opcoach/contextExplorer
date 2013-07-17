@@ -97,7 +97,7 @@ public class ContextTreeProvider extends LabelProvider implements ITreeContentPr
 		// Return a color if a text contained in this node containes the text.
 		if (element instanceof IEclipseContext && contextRegistry.containsText((IEclipseContext) element))
 		{
-			return Display.getCurrent().getSystemColor(SWT.COLOR_DARK_MAGENTA);
+			return Display.getCurrent().getSystemColor(SWT.COLOR_BLUE);
 		}
 		return null;
 	}
