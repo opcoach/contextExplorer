@@ -180,7 +180,18 @@ public class ContextExplorerPart
 				contentTable.refresh(true);
 			}
 		});
-		
+
+		final Button ignoreWildCards = new Button(comp, SWT.CHECK);
+		ignoreWildCards.setText("Ignore WildCards");
+		ignoreWildCards.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				contextRegistry.setIgnoreWildCards(ignoreWildCards.getSelection());
+				tv.refresh(true);
+				contentTable.refresh(true);
+			}
+		});
+
 		SashForm sashForm = new SashForm(parent, SWT.VERTICAL);
 		sashForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
@@ -268,5 +279,5 @@ public class ContextExplorerPart
 		tv.getControl().setFocus();
 	}
 
-	
+
 }
