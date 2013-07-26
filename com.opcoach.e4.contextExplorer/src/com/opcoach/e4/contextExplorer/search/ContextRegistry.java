@@ -24,7 +24,7 @@ import org.eclipse.e4.core.services.log.Logger;
  */
 @Creatable
 @Singleton
-public class ContextRegistry 
+public class ContextRegistry
 {
 
 	@Inject
@@ -33,9 +33,11 @@ public class ContextRegistry
 	private StringMatcher matcher;
 
 	private String pattern;
-	
+
 	private boolean ignoreCase;
-	
+
+	private boolean ignoreWildCards;
+
 	@Inject
 	public ContextRegistry()
 	{
@@ -44,11 +46,14 @@ public class ContextRegistry
 	public void setPattern(String newPattern)
 	{
 		pattern = newPattern;
-		//matcher = new StringMatcher(newPattern, false, false); // do not ignore case and wildcards
 	}
-	
+
 	public void setIgnoreCase(boolean newIgnoreCase) {
 		ignoreCase = newIgnoreCase;
+	}
+
+	public void setIgnoreWildCards(boolean ignoreWildCards) {
+		this.ignoreWildCards = ignoreWildCards;
 	}
 
 	/**
@@ -60,11 +65,11 @@ public class ContextRegistry
 		if (pattern == null) {
 			pattern = "";
 		}
-		matcher = new StringMatcher(pattern, ignoreCase, false);
-		
-		// It is useless to store the values in a map, because context changes everytime and it should be tracked. 
+		matcher = new StringMatcher(pattern, ignoreCase, ignoreWildCards);
+
+		// It is useless to store the values in a map, because context changes everytime and it should be tracked.
 		Collection<String> values =  computeValues(ctx);
-			
+
 		// Search for a string matching the pattern
 		boolean found = false;
 		for (String s : values)
