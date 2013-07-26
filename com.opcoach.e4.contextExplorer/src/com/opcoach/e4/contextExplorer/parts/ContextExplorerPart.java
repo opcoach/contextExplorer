@@ -10,9 +10,6 @@
  *******************************************************************************/
 package com.opcoach.e4.contextExplorer.parts;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -40,13 +37,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.osgi.framework.Bundle;
@@ -173,6 +170,17 @@ public class ContextExplorerPart
 			}
 		});
 
+		final Button ignoreCase = new Button(comp, SWT.CHECK);
+		ignoreCase.setText("Ignore case");
+		ignoreCase.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				contextRegistry.setIgnoreCase(ignoreCase.getSelection());
+				tv.refresh(true);
+				contentTable.refresh(true);
+			}
+		});
+		
 		SashForm sashForm = new SashForm(parent, SWT.VERTICAL);
 		sashForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
@@ -242,8 +250,9 @@ public class ContextExplorerPart
 	@Inject
 	public void setSelection(@Optional @Named(IServiceConstants.ACTIVE_SELECTION) EclipseContext ctx)
 	{
-		if (ctx == null)
+		if (ctx == null) {
 			return;
+		}
 		contentTable.setInput(ctx);
 		contentTable.refresh();
 	}
