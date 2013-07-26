@@ -2,14 +2,12 @@ package com.opcoach.e4.contextExplorer.search;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
 import org.eclipse.e4.core.services.log.Logger;
@@ -34,7 +32,10 @@ public class ContextRegistry
 
 	private StringMatcher matcher;
 
-
+	private String pattern;
+	
+	private boolean ignoreCase;
+	
 	@Inject
 	public ContextRegistry()
 	{
@@ -42,7 +43,12 @@ public class ContextRegistry
 
 	public void setPattern(String newPattern)
 	{
-		matcher = new StringMatcher(newPattern, false, false); // do not ignore case and wildcards
+		pattern = newPattern;
+		//matcher = new StringMatcher(newPattern, false, false); // do not ignore case and wildcards
+	}
+	
+	public void setIgnoreCase(boolean newIgnoreCase) {
+		ignoreCase = newIgnoreCase;
 	}
 
 	/**
@@ -51,6 +57,11 @@ public class ContextRegistry
 	 */
 	public boolean containsText(IEclipseContext ctx)
 	{
+		if (pattern == null) {
+			pattern = "";
+		}
+		matcher = new StringMatcher(pattern, ignoreCase, false);
+		
 		// It is useless to store the values in a map, because context changes everytime and it should be tracked. 
 		Collection<String> values =  computeValues(ctx);
 			
@@ -88,8 +99,9 @@ public class ContextRegistry
 			{
 				result.add(entry.getKey().toString());
 				Object value = entry.getValue();
-				if (value != null)
+				if (value != null) {
 					result.add(value.toString());
+				}
 			}
 		} else
 		{
@@ -97,6 +109,5 @@ public class ContextRegistry
 		}
 		return result;
 	}
-
 
 }
