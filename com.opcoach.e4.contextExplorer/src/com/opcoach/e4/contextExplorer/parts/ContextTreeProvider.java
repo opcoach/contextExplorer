@@ -10,6 +10,8 @@
  *******************************************************************************/
 package com.opcoach.e4.contextExplorer.parts;
 
+import java.util.Collection;
+
 import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -57,6 +59,9 @@ public class ContextTreeProvider extends LabelProvider implements ITreeContentPr
 		if (inputElement instanceof MApplication)
 		{
 			return new Object[] { ((MApplication) inputElement).getContext().getParent() };
+		} else if (inputElement instanceof Collection<?>)
+		{
+			return ((Collection<?>) inputElement).toArray();
 		}
 
 		return new Object[0];

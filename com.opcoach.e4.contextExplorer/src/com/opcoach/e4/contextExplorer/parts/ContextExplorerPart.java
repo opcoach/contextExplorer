@@ -10,12 +10,18 @@
  *******************************************************************************/
 package com.opcoach.e4.contextExplorer.parts;
 
+import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
@@ -47,6 +53,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 
 import com.opcoach.e4.contextExplorer.search.ContextRegistry;
 
@@ -67,9 +74,6 @@ public class ContextExplorerPart
 	private ContextTableLabelProvider keyLabelProvider;
 
 	private ContextTableLabelProvider valueLabelProvider;
-
-	/** Store the prefix used to highlight objects in the table */
-	private String prefixForColor = "com.";
 
 	private ImageRegistry imgReg;
 
@@ -93,7 +97,6 @@ public class ContextExplorerPart
 	{
 		parent.setLayout(new GridLayout(1, false));
 
-		// borderColor = new Color(parent.getDisplay(), 170, 176, 191);
 		final Composite comp = new Composite(parent, SWT.NONE);
 		comp.setLayout(new GridLayout(5, false));
 
@@ -128,24 +131,6 @@ public class ContextExplorerPart
 			}
 		});
 
-		/*
-		 * Label title = new Label(comp, SWT.NONE);
-		 * title.setText("Prefix used for color :"); final Text colorFilter =
-		 * new Text(comp, SWT.BORDER); colorFilter.setText(prefixForColor);
-		 * colorFilter
-		 * .setToolTipText("Enter here the prefix to be highlighted in table");
-		 * GridDataFactory.fillDefaults().hint(180,
-		 * SWT.DEFAULT).applyTo(colorFilter); colorFilter.addKeyListener(new
-		 * KeyListener() {
-		 * 
-		 * @Override public void keyReleased(KeyEvent e) { // Update the text
-		 * for prefixForColor and refresh the table prefixForColor =
-		 * colorFilter.getText(); contentTable.refresh(true);
-		 * 
-		 * }
-		 * 
-		 * @Override public void keyPressed(KeyEvent e) { // Nothing to do } });
-		 */
 
 		// Do the search widget
 		final Text text = new Text(comp, SWT.SEARCH | SWT.ICON_SEARCH);
@@ -200,7 +185,9 @@ public class ContextExplorerPart
 		treeContentProvider = ContextInjectionFactory.make(ContextTreeProvider.class, ctx);
 		tv.setContentProvider(treeContentProvider);
 		tv.setLabelProvider(treeContentProvider);
-		tv.setInput(a);
+				
+		// tv.setInput(a);
+		tv.setInput(getAllBundleContexts());
 
 		tv.addSelectionChangedListener(new ISelectionChangedListener() {
 
@@ -221,6 +208,38 @@ public class ContextExplorerPart
 		// Open all the tree
 		tv.expandAll();
 
+	}
+	
+	/** Get all the contexts created by EclipseContextFactory  */
+	Collection<IEclipseContext> getAllBundleContexts()
+	{
+		Collection<IEclipseContext> result = Collections.emptyList();
+		try
+		{
+			// Must use introspection to get the weak hash map (no getter).
+			Field f = EclipseContextFactory.class.getDeclaredField("serviceContexts");
+			f.setAccessible(true);
+			@SuppressWarnings("unchecked")
+			Map<BundleContext, IEclipseContext> ctxs = (Map<BundleContext, IEclipseContext>) f.get(null);
+			System.out.println("Valeur de v : " + ctxs);
+			result = ctxs.values();
+			
+		} catch (SecurityException e)
+		{
+			e.printStackTrace();
+		} catch (NoSuchFieldException e)
+		{
+			e.printStackTrace();
+		} catch (IllegalArgumentException e)
+		{
+			e.printStackTrace();
+		} catch (IllegalAccessException e)
+		{
+			e.printStackTrace();
+		}
+		
+		return result;
+		
 	}
 
 	private void createContextContentTable(MApplication a, SashForm sashForm, IEclipseContext ctx)

@@ -44,6 +44,7 @@ public class ContextTableLabelProvider extends ColumnLabelProvider
 	@Override
 	public String getText(Object element)
 	{ 
+		@SuppressWarnings("unchecked")
 		Map.Entry<String, Object> mapEntry = (Map.Entry<String, Object>) element;
 		Object o = displayKey ? mapEntry.getKey() : mapEntry.getValue();
 		return (o == null) ? "null" : o.toString();
