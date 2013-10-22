@@ -221,7 +221,6 @@ public class ContextExplorerPart
 			f.setAccessible(true);
 			@SuppressWarnings("unchecked")
 			Map<BundleContext, IEclipseContext> ctxs = (Map<BundleContext, IEclipseContext>) f.get(null);
-			System.out.println("Valeur de v : " + ctxs);
 			result = ctxs.values();
 			
 		} catch (SecurityException e)
