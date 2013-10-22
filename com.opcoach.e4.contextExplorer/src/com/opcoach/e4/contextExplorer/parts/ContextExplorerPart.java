@@ -295,7 +295,7 @@ public class ContextExplorerPart
 	@Focus
 	public void setFocus()
 	{
-		tv.getControl().setFocus();
+		contentTable.getControl().setFocus();
 	}
 
 
