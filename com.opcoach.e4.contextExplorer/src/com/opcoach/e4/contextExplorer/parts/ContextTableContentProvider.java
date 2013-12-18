@@ -10,42 +10,33 @@
  *******************************************************************************/
 package com.opcoach.e4.contextExplorer.parts;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 public class ContextTableContentProvider implements IStructuredContentProvider
 {
-		
-	@Inject
-   public ContextTableContentProvider()
-	{
-		
-	}
+
+	EclipseContext selectedContext;
 
 	@Override
 	public void dispose()
 	{
-		// TODO Auto-generated method stub
-
+		selectedContext = null;
 	}
 
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
 	{
-		// TODO Auto-generated method stub
-
+		selectedContext = (newInput instanceof EclipseContext) ? (EclipseContext) newInput : null;
 	}
 
 	@Override
 	public Object[] getElements(Object inputElement)
 	{
-		if (inputElement instanceof EclipseContext)
-			return ((EclipseContext) inputElement).localData().entrySet().toArray();
-		return null;
+		if (selectedContext == null)
+			return new Object[0];
+		return selectedContext.localData().entrySet().toArray();
 	}
-
 
 }

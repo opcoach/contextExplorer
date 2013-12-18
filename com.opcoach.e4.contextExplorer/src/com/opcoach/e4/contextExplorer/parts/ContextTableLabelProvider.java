@@ -3,11 +3,7 @@ package com.opcoach.e4.contextExplorer.parts;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
-import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.core.internal.contexts.EclipseContext;
-import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -21,18 +17,13 @@ public class ContextTableLabelProvider extends ColumnLabelProvider
 
 	@Inject
 	private ContextRegistry contextRegistry;
-	
-	// Get the current selected context
-	@Optional @Named(IServiceConstants.ACTIVE_SELECTION) EclipseContext ctx;
-	
-
+		
 	private boolean displayKey = false;
 
 	@Inject
 	public ContextTableLabelProvider()
 	{
 		super();
-		displayKey = false;
 	}
 	
 	public void setDisplayKey(boolean k)
@@ -53,7 +44,7 @@ public class ContextTableLabelProvider extends ColumnLabelProvider
 	@Override
 	public Color getForeground(Object element)
 	{
-		String s = getText(element); // TODO : to be optimised (already computed)
+		String s = getText(element); 
 		return (contextRegistry.matchText(s)) ? Display.getCurrent().getSystemColor(SWT.COLOR_BLUE) : null;
 	}
 	
