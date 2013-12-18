@@ -87,6 +87,7 @@ public class ContextExplorerPart
 		imgReg = new ImageRegistry();
 		imgReg.put("collapseall", ImageDescriptor.createFromURL(b.getEntry("icons/collapseall.gif")));
 		imgReg.put("expandall", ImageDescriptor.createFromURL(b.getEntry("icons/expandall.gif")));
+		imgReg.put("refresh", ImageDescriptor.createFromURL(b.getEntry("icons/refresh.gif")));
 	}
 
 	/**
@@ -98,8 +99,24 @@ public class ContextExplorerPart
 		parent.setLayout(new GridLayout(1, false));
 
 		final Composite comp = new Composite(parent, SWT.NONE);
-		comp.setLayout(new GridLayout(5, false));
+		comp.setLayout(new GridLayout(6, false));
 
+		Button refreshButton = new Button(comp, SWT.FLAT);
+		refreshButton.setImage(imgReg.get("refresh"));
+		refreshButton.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
+				tv.refresh(true);
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e)
+			{
+			}
+		});
+	
 		Button expandAll = new Button(comp, SWT.FLAT);
 		expandAll.setImage(imgReg.get("expandall"));
 		expandAll.addSelectionListener(new SelectionListener() {
@@ -185,6 +202,7 @@ public class ContextExplorerPart
 		treeContentProvider = ContextInjectionFactory.make(ContextTreeProvider.class, ctx);
 		tv.setContentProvider(treeContentProvider);
 		tv.setLabelProvider(treeContentProvider);
+		tv.setSorter(new ViewerSorter());
 				
 		// tv.setInput(a);
 		tv.setInput(getAllBundleContexts());
