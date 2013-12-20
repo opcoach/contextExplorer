@@ -10,6 +10,9 @@
  *******************************************************************************/
 package com.opcoach.e4.contextExplorer.parts;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -18,6 +21,7 @@ public class ContextTableContentProvider implements IStructuredContentProvider
 {
 
 	EclipseContext selectedContext;
+	private boolean showContext;
 
 	@Override
 	public void dispose()
@@ -36,7 +40,22 @@ public class ContextTableContentProvider implements IStructuredContentProvider
 	{
 		if (selectedContext == null)
 			return new Object[0];
-		return selectedContext.localData().entrySet().toArray();
+		Collection<Object> result = new ArrayList<Object>();
+		result.addAll(selectedContext.localData().entrySet());
+		if (showContext)
+		{
+			result.add("--> CONTEXT FUNCTIONS");
+			result.addAll(selectedContext.localContextFunction().entrySet());
+		}
+		result.add("--> RAW LISTENERS");
+		result.addAll(selectedContext.getRawListenerNames());
+		return result.toArray();
+	}
+
+	public void showContextFunctions(boolean selection)
+	{
+		showContext = selection;
+		
 	}
 
 }

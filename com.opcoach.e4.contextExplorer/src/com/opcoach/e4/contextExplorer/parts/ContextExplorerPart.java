@@ -11,6 +11,7 @@
 package com.opcoach.e4.contextExplorer.parts;
 
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -20,6 +21,7 @@ import javax.inject.Named;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.internal.contexts.Computation;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -61,7 +63,7 @@ public class ContextExplorerPart
 
 	private TreeViewer tv;
 
-	private TableViewer contentTable;
+	// private TableViewer contentTable;
 
 	@Inject
 	private ESelectionService selService;
@@ -81,6 +83,11 @@ public class ContextExplorerPart
 	@Inject
 	private ContextRegistry contextRegistry;
 
+	private ContextDataPart contextDataPart;
+
+	
+	@Inject public void testInjections(ESelectionService myservice) { }
+	
 	@Inject
 	private void initializeImageRegistry()
 	{
@@ -165,7 +172,7 @@ public class ContextExplorerPart
 				{
 					contextRegistry.setPattern(text.getText());
 					tv.refresh(true);
-					contentTable.refresh(true);
+					contextDataPart.refresh(true);
 				}
 
 				@Override
@@ -185,7 +192,7 @@ public class ContextExplorerPart
 				{
 					contextRegistry.setIgnoreCase(ignoreCase.getSelection());
 					tv.refresh(true);
-					contentTable.refresh(true);
+					contextDataPart.refresh(true);
 				}
 			});
 
@@ -198,12 +205,13 @@ public class ContextExplorerPart
 				{
 					contextRegistry.setIgnoreWildCards(ignoreWildCards.getSelection());
 					tv.refresh(true);
-					contentTable.refresh(true);
+					contextDataPart.refresh(true);
 				}
 			});
 
-		SashForm sashForm = new SashForm(parent, SWT.VERTICAL);
+		SashForm sashForm = new SashForm(parent, SWT.VERTICAL | SWT.V_SCROLL | SWT.H_SCROLL);
 		sashForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		
 
 		// TreeViewer on the top
 		tv = new TreeViewer(sashForm);
@@ -227,29 +235,58 @@ public class ContextExplorerPart
 				}
 			});
 
-		createContextContentTable(a, sashForm, ctx);
+		IEclipseContext subCtx = ctx.createChild("Context for ContextDataPart");
+		subCtx.set(Composite.class, sashForm);
+		contextDataPart = ContextInjectionFactory.make(ContextDataPart.class, subCtx);
+		// Call directly the createControls to avoid a context creation with Composite to do this.
+		//contextDataPart.createControls(sashForm, ctx);   
+		// But inject it anyway :)
+	//	ContextInjectionFactory.inject(contextDataPart, ctx);
+		
+		
+		// createContextContentTable(a, sashForm, ctx);
 
 		// Set the correct weight for sahsform
-		sashForm.setWeights(new int[] { 15, 85 });
+		sashForm.setWeights(new int[] { 35, 65 });
 
 		// Open all the tree
 		tv.expandAll();
 
 	}
 
-	private void createContextContentTable(MApplication a, SashForm sashForm, IEclipseContext ctx)
+/*	private void createContextContentTable(MApplication a, SashForm sashForm, IEclipseContext ctx)
 	{
-		contentTable = new TableViewer(sashForm);
+		
+		final Composite comp = new Composite(sashForm, SWT.NONE);
+		comp.setLayout(new GridLayout(1, false));
+		comp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+
+		final Button showContextFunctions = new Button(comp, SWT.CHECK);
+		showContextFunctions.setText("Show context functions");
+		showContextFunctions.addSelectionListener(new SelectionAdapter()
+			{
+				@Override
+				public void widgetSelected(SelectionEvent e)
+				{
+					tableContentProvider.showContextFunctions(showContextFunctions.getSelection());
+					contextRegistry.setContextFunctionDisplayed(showContextFunctions.getSelection());
+					contentTable.refresh(true);
+				}
+			});
+		showContextFunctions.setToolTipText("Select this box to show in the table values computed by context functions");
+
+		
+		contentTable = new TableViewer(comp);
 		tableContentProvider = ContextInjectionFactory.make(ContextTableContentProvider.class, ctx);
 		contentTable.setContentProvider(tableContentProvider);
-
+		
 		// Create the table with 2 columns: key and value
 		final Table cTable = contentTable.getTable();
 		cTable.setHeaderVisible(true);
 		cTable.setLinesVisible(true);
-		GridData gd_cTable = new GridData(SWT.FILL);
-		gd_cTable.verticalAlignment = SWT.TOP;
-		cTable.setLayoutData(gd_cTable);
+		cTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
 
 		// Create the first column for the key
 		TableViewerColumn keyCol = new TableViewerColumn(contentTable, SWT.NONE);
@@ -271,14 +308,68 @@ public class ContextExplorerPart
 		// Add the sort stuff to manage clic on header and the
 		// customerComparator
 		comparator = new ContextEntryComparator(0, keyLabelProvider);
-		contentTable.setComparator(comparator);
+		
+		// Put the button in bold font
+		showContextFunctions.setFont(keyLabelProvider.getBoldFont());
 		
 		// Set input data and content provider (default ArrayContentProvider)
 		contentTable.setInput(a.getContext().getParent());
+		
+		contentTable.addSelectionChangedListener(new ISelectionChangedListener()
+		{
 
-	}
+			@Override
+			public void selectionChanged(SelectionChangedEvent event)
+			{
+			
+				EclipseContext currentContext = (EclipseContext) ((IStructuredSelection) tv.getSelection()).getFirstElement();
 
-	@Inject
+				Object selectedInContext = ((IStructuredSelection) event.getSelection()).getFirstElement();
+				String key = "";
+
+				if (selectedInContext instanceof Map.Entry)
+				{
+				Map.Entry<String,Object> value = (Map.Entry<String,Object>) selectedInContext;
+				System.out.println("Element selectionné" + value);
+				if (value == null)
+					return;
+				key=value.getKey();
+			}
+				else if (selectedInContext instanceof String)
+				{
+					key = (String) selectedInContext;
+				}
+			
+				System.out.println("---------------   Listeners on " + key + "------------------");
+
+				Set<Computation> listeners = (currentContext != null) ? currentContext.getListeners(key) : null;
+				if (listeners != null)
+				{
+				for (Computation c : listeners )
+					System.out.println("Computation ("+c.getClass().getSimpleName() + ") : " + c.toString() + " valid = " + c.isValid());
+				}
+				System.out.println("---------------   End listeners ------------------");
+				
+
+				
+				System.out.println("Contexte selectionné : " + currentContext);
+				System.out.println("...........................");
+				String indent = "";
+				do
+				{
+					System.out.println(indent + "Contexte Courant : " + currentContext);
+					ContextExplorerHelper.displayContextListener(currentContext, indent);
+					currentContext = currentContext.getParent();
+					indent = indent + "   ";
+
+				} while (currentContext != null);
+
+			}
+		});
+
+	} */
+
+/*	@Inject
 	public void setSelection(@Optional @Named(IServiceConstants.ACTIVE_SELECTION) EclipseContext ctx)
 	{
 		if (ctx == null)
@@ -286,8 +377,9 @@ public class ContextExplorerPart
 			return;
 		}
 		contentTable.setInput(ctx);
+		contentTable.setComparator(null);
 		contentTable.refresh();
-	}
+	} */
 
 	@PreDestroy
 	public void dispose()
@@ -297,7 +389,7 @@ public class ContextExplorerPart
 	@Focus
 	public void setFocus()
 	{
-		contentTable.getControl().setFocus();
+		tv.getControl().setFocus();
 	}
 
 	/**
@@ -361,6 +453,8 @@ public class ContextExplorerPart
 				@Override
 				public void widgetSelected(SelectionEvent e)
 				{
+					viewer.setComparator(comparator);
+
 					comparator.setColumn(columnIndex);
 					comparator.setLabelProvider(textProvider);
 					viewer.getTable().setSortDirection(comparator.getDirection());

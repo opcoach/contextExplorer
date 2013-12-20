@@ -67,6 +67,64 @@ public class ContextExplorerHelper
 		return result;
 
 	}
+	
+	
+	static void displayContextListener(EclipseContext ctx, String indent)
+	{
+		
+		
+		
+		for (String c : ctx.getRawListenerNames())
+		{
+			System.out.println(indent+"Raw Listener : " + c);
+			// System.out.println(indent+"Computation ("+c.getClass().getSimpleName() + ") : " + c.toString() + " valid = " + c.isValid());
+		}		
+		
+		
+	/*	Collection<IEclipseContext> result = Collections.emptyList();
+		if (indent == null)
+			indent = "";
+		try
+		{
+			// Must use introspection to get the weak hash map (no getter).
+			Field f = EclipseContext.class.getDeclaredField("weakListeners");
+			f.setAccessible(true);
+			@SuppressWarnings("unchecked")
+			WeakGroupedListenerList listeners = (WeakGroupedListenerList) f.get(ctx);
+
+			System.out.println(indent+" -----     Names ------   ");
+			for (String n : listeners.getNames())
+				System.out.println(indent+"group name in weaklisteners : " + n);
+			System.out.println(indent+" -----     Computations ------   ");
+			for (Computation c : listeners.getListeners())
+			{
+				System.out.println(indent+"Computation ("+c.getClass().getSimpleName() + ") : " + c.toString() + " valid = " + c.isValid());
+			}
+		} catch (SecurityException e)
+		{
+			e.printStackTrace();
+		} catch (NoSuchFieldException e)
+		{
+			e.printStackTrace();
+		} catch (IllegalArgumentException e)
+		{
+			e.printStackTrace();
+		} catch (IllegalAccessException e)
+		{
+			e.printStackTrace();
+		}
+
+		
+		*/
+		
+		
+		
+	}
+
+	
+	
+	
+	
 
 	
 	

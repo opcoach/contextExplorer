@@ -15,9 +15,7 @@ import org.eclipse.e4.core.services.log.Logger;
 /**
  * Register for each context in the application, all strings for keys and values
  * so as to filter the tree the main map contains : an IEclipseContext as a key
- * a list of strings present in this context
- * 
- * It extends RunAndTrack to be informed of contexts updates
+ * a list of strings present in this context *
  * 
  * @author olivier
  * 
@@ -38,23 +36,30 @@ public class ContextRegistry
 
 	private boolean ignoreWildCards;
 
-	@Inject
-	public ContextRegistry()
-	{
-	}
+	private boolean contextFunctionDisplayed;
+
+
 
 	public void setPattern(String newPattern)
 	{
 		pattern = newPattern;
 	}
 
-	public void setIgnoreCase(boolean newIgnoreCase) {
+	public void setIgnoreCase(boolean newIgnoreCase)
+	{
 		ignoreCase = newIgnoreCase;
 	}
 
-	public void setIgnoreWildCards(boolean ignoreWildCards) {
+	public void setIgnoreWildCards(boolean ignoreWildCards)
+	{
 		this.ignoreWildCards = ignoreWildCards;
 	}
+	
+	public void setContextFunctionDisplayed(boolean contextFunctionDisplayed)
+	{
+		this.contextFunctionDisplayed = contextFunctionDisplayed;
+	}
+
 
 	/**
 	 * This method search for an object and check if it contains the text or a
@@ -62,13 +67,15 @@ public class ContextRegistry
 	 */
 	public boolean containsText(IEclipseContext ctx)
 	{
-		if (pattern == null) {
+		if (pattern == null)
+		{
 			pattern = "";
 		}
 		matcher = new StringMatcher(pattern, ignoreCase, ignoreWildCards);
 
-		// It is useless to store the values in a map, because context changes everytime and it should be tracked.
-		Collection<String> values =  computeValues(ctx);
+		// It is useless to store the values in a map, because context changes
+		// everytime and it should be tracked.
+		Collection<String> values = computeValues(ctx);
 
 		// Search for a string matching the pattern
 		boolean found = false;
@@ -87,6 +94,8 @@ public class ContextRegistry
 	{
 		return (matcher != null) && matcher.match(text);
 	}
+	
+
 
 	/**
 	 * Extract all string values in context
@@ -99,20 +108,39 @@ public class ContextRegistry
 		Collection<String> result = new ArrayList<String>();
 		if (ctx instanceof EclipseContext)
 		{
-			// Search for all strings in this context...
-			for (Map.Entry<String, Object> entry : ((EclipseContext) ctx).localData().entrySet())
+			// Search for all strings in this context (values and context function)
+			
+			extractStringsFromMap(((EclipseContext) ctx).localData(), result);
+
+			// Search also in context functions
+			if (contextFunctionDisplayed)
 			{
-				result.add(entry.getKey().toString());
-				Object value = entry.getValue();
-				if (value != null) {
-					result.add(value.toString());
-				}
+				extractStringsFromMap(((EclipseContext) ctx).localContextFunction(), result);
 			}
+
 		} else
 		{
 			log.warn("Warning : the received EclipseContext has not the expected type. It is a : " + ctx.getClass().toString());
 		}
 		return result;
+	}
+
+	/**
+	 * 
+	 * @param map the map to extract the strings (keys and values)
+	 * @param result the result to fill with strings
+	 */
+	private void extractStringsFromMap(Map<String, Object> map, Collection<String> result)
+	{
+		for (Map.Entry<String, Object> entry : map.entrySet())
+		{
+			result.add(entry.getKey().toString());
+			Object value = entry.getValue();
+			if (value != null)
+			{
+				result.add(value.toString());
+			}
+		}
 	}
 
 }
