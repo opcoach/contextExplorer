@@ -48,15 +48,23 @@ import com.opcoach.e4.contextExplorer.search.ContextRegistry;
 public class ContextDataProvider extends ColumnLabelProvider implements ITreeContentProvider
 {
 
-	private static final String NO_VALUES_FOUND = "No values found";
-	private static final String INJECTED_IN_FIELD = "Injected in field :";
-	private static final String INJECTED_IN_METHOD = "Injected in method :";
-	private static final String INJECT_IMG_KEY = "inject";
-	private static final String CONTEXT_FUNCTION_IMG_KEY = "contextFunction";
 	private static final Color COLOR_IF_FOUND = Display.getCurrent().getSystemColor(SWT.COLOR_BLUE);
 	private static final Object[] EMPTY_RESULT = new Object[0];
 	public static final String LOCAL_VALUE_NODE = "Local values managed  by this context";
 	public static final String INHERITED_INJECTED_VALUE_NODE = "Other values injected using this context";
+
+	private static final String NO_VALUES_FOUND = "No values found";
+	private static final String INJECTED_IN_FIELD = "Injected in field :";
+	private static final String INJECTED_IN_METHOD = "Injected in method :";
+
+	// Image keys constants
+	private static final String PUBLIC_METHOD_IMG_KEY = "icons/methpub_obj.gif";
+	private static final String PUBLIC_FIELD_IMG_KEY = "icons/field_public_obj.gif";
+	private static final String VALUE_IN_CONTEXT_IMG_KEY = "icons/valueInContext.gif";
+	private static final String INHERITED_VARIABLE_IMG_KEY = "icons/inher_co.gif";
+	private static final String LOCAL_VARIABLE_IMG_KEY = "icons/Letter-L-icon.png";
+	private static final String CONTEXT_FUNCTION_IMG_KEY = "icons/contextFunction.gif";
+	private static final String INJECT_IMG_KEY = "icons/annotation_obj.gif";
 
 	private ImageRegistry imgReg;
 
@@ -188,25 +196,44 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 	/** Get the bold font for keys that are computed with ContextFunction */
 	public Font getFont(Object element)
 	{
-		return isAContextKeyFunction(element) ? boldFont : null;
+		return (element == LOCAL_VALUE_NODE || element == INHERITED_INJECTED_VALUE_NODE) ? boldFont : null;
+	
 	}
 
 	@Override
 	public Image getImage(Object element)
 	{
-		if ((element == LOCAL_VALUE_NODE) || (element == INHERITED_INJECTED_VALUE_NODE))
-		{
+		if (!displayKey) // No image in value column, only in key column
 			return null;
+
+		if (element == LOCAL_VALUE_NODE)
+		{
+			return selectedContext == null ? null : imgReg.get(LOCAL_VARIABLE_IMG_KEY);
+		} else if (element == INHERITED_INJECTED_VALUE_NODE)
+		{
+			return selectedContext == null ? null : imgReg.get(INHERITED_VARIABLE_IMG_KEY);
 		} else if (element instanceof Computation)
 		{
-			// For a computation : display field or method in key column and value in value column
+			// For a computation : display field or method in key column and
+			// value in value column
 			String txt = super.getText(element);
-			return txt.contains("#") ? imgReg.get("publicMethod") : imgReg.get("publicField");
+			return txt.contains("#") ? imgReg.get(PUBLIC_METHOD_IMG_KEY) : imgReg.get(PUBLIC_FIELD_IMG_KEY);
+		} else if (element instanceof Map.Entry)
+		{
+			if (isAContextKeyFunction(element))
+				return imgReg.get(CONTEXT_FUNCTION_IMG_KEY);
+			else
+			{
+				// It is a value. If it is injected somewhere, display the inject image
+				return hasChildren(element) ? imgReg.get(INJECT_IMG_KEY) : imgReg.get(VALUE_IN_CONTEXT_IMG_KEY);
+			}
 
 		}
-		return displayKey && isAContextKeyFunction(element) ? imgReg.get(CONTEXT_FUNCTION_IMG_KEY) : null;
+
+		return imgReg.get(INJECT_IMG_KEY);
+
 	}
-	
+
 	@Override
 	public String getToolTipText(Object element)
 	{
@@ -220,16 +247,12 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 	{
 		return getImage(object);
 	}
-	
-	
-	
+
 	@Override
 	public int getToolTipStyle(Object object)
 	{
 		return SWT.SHADOW_OUT;
 	}
-	
-	
 
 	/**
 	 * Compute it the current entry in context is a context function
@@ -284,13 +307,15 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 
 			} else if (element instanceof String)
 			{
-				// Ask the context to know if there are listeners for this raw listener name
+				// Ask the context to know if there are listeners for this raw
+				// listener name
 				return selectedContext.getListeners((String) element);
 			}
 		}
 		return null;
 
 	}
+
 	@Inject
 	@Optional
 	public void listenToContext(@Named(IServiceConstants.ACTIVE_SELECTION) EclipseContext ctx)
@@ -302,10 +327,16 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 	{
 		Bundle b = org.eclipse.core.runtime.Platform.getBundle("com.opcoach.e4.contextExplorer");
 		imgReg = new ImageRegistry();
-		imgReg.put(CONTEXT_FUNCTION_IMG_KEY, ImageDescriptor.createFromURL(b.getEntry("icons/contextFunction.png")));
-		imgReg.put(INJECT_IMG_KEY, ImageDescriptor.createFromURL(b.getEntry("icons/inject.png")));
-		imgReg.put("publicMethod", ImageDescriptor.createFromURL(b.getEntry("icons/methpub_obj.gif")));
-		imgReg.put("publicField", ImageDescriptor.createFromURL(b.getEntry("icons/field_public_obj.gif")));
+
+		imgReg.put(CONTEXT_FUNCTION_IMG_KEY, ImageDescriptor.createFromURL(b.getEntry(CONTEXT_FUNCTION_IMG_KEY)));
+		imgReg.put(INJECT_IMG_KEY, ImageDescriptor.createFromURL(b.getEntry(INJECT_IMG_KEY)));
+		imgReg.put(PUBLIC_METHOD_IMG_KEY, ImageDescriptor.createFromURL(b.getEntry(PUBLIC_METHOD_IMG_KEY)));
+		imgReg.put(PUBLIC_FIELD_IMG_KEY, ImageDescriptor.createFromURL(b.getEntry(PUBLIC_FIELD_IMG_KEY)));
+		imgReg.put(PUBLIC_FIELD_IMG_KEY, ImageDescriptor.createFromURL(b.getEntry(PUBLIC_FIELD_IMG_KEY)));
+		imgReg.put(LOCAL_VARIABLE_IMG_KEY, ImageDescriptor.createFromURL(b.getEntry(LOCAL_VARIABLE_IMG_KEY)));
+		imgReg.put(VALUE_IN_CONTEXT_IMG_KEY, ImageDescriptor.createFromURL(b.getEntry(VALUE_IN_CONTEXT_IMG_KEY)));
+		imgReg.put(INHERITED_VARIABLE_IMG_KEY, ImageDescriptor.createFromURL(b.getEntry(INHERITED_VARIABLE_IMG_KEY)));
+
 	}
 
 	private void initFonts()
