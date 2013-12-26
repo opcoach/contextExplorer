@@ -12,6 +12,7 @@ package com.opcoach.e4.contextExplorer.parts;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,9 +28,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -48,7 +47,9 @@ import com.opcoach.e4.contextExplorer.search.ContextRegistry;
 public class ContextDataProvider extends ColumnLabelProvider implements ITreeContentProvider
 {
 
+	private static final String NO_VALUE_COULD_BE_COMPUTED = "No value could be yet computed";
 	private static final Color COLOR_IF_FOUND = Display.getCurrent().getSystemColor(SWT.COLOR_BLUE);
+	private static final Color COLOR_IF_NOT_COMPUTED = Display.getCurrent().getSystemColor(SWT.COLOR_MAGENTA);
 	private static final Object[] EMPTY_RESULT = new Object[0];
 	public static final String LOCAL_VALUE_NODE = "Local values managed  by this context";
 	public static final String INHERITED_INJECTED_VALUE_NODE = "Other values injected using this context";
@@ -113,7 +114,25 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 			Collection<Object> result = new ArrayList<Object>();
 
 			result.addAll(selectedContext.localData().entrySet());
-			result.addAll(selectedContext.localContextFunction().entrySet());
+			
+			
+			// ICI Il faut récupérer les valeurs de context function. 
+			// Le entrySet de localContextFunction retourne des <String,Object> où Object est une IContextFunction
+			// Il faut resortir les valeurs du contexte et les afficher.. en mémorisant que c'est une contexte function
+			Map cfValues = new HashMap<String, Object>();
+			for (String key : selectedContext.localContextFunction().keySet())
+				try
+			{
+				cfValues.put(key, selectedContext.get(key));
+			}
+			catch (Exception e)
+			{
+				cfValues.put(key, NO_VALUE_COULD_BE_COMPUTED);
+			}
+			
+			result.addAll(cfValues.entrySet());
+		
+			// result.addAll(selectedContext.localContextFunction().entrySet());
 			return result.toArray();
 		} else if (inputElement == INHERITED_INJECTED_VALUE_NODE)
 		{
@@ -190,6 +209,9 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 	{
 		// Return blue color if the string matches the search
 		String s = getText(element);
+		if (s == NO_VALUE_COULD_BE_COMPUTED)
+			return COLOR_IF_NOT_COMPUTED;
+		
 		return (contextRegistry.matchText(s)) ? COLOR_IF_FOUND : null;
 	}
 
@@ -238,7 +260,12 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 	public String getToolTipText(Object element)
 	{
 		if (isAContextKeyFunction(element))
-			return "This element is computed by a ContextKey function";
+		{
+			String key = (String) ((Map.Entry<?,?>) element).getKey();
+			String fname = (String) selectedContext.localContextFunction().get(key).getClass().getCanonicalName();
+
+			return "This value is computed by the Context Function : " + fname;
+		}
 		return super.getToolTipText(element);
 	}
 

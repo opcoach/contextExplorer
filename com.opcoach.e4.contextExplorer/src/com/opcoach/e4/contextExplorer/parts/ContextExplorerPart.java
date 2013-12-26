@@ -238,13 +238,6 @@ public class ContextExplorerPart
 		IEclipseContext subCtx = ctx.createChild("Context for ContextDataPart");
 		subCtx.set(Composite.class, sashForm);
 		contextDataPart = ContextInjectionFactory.make(ContextDataPart.class, subCtx);
-		// Call directly the createControls to avoid a context creation with Composite to do this.
-		//contextDataPart.createControls(sashForm, ctx);   
-		// But inject it anyway :)
-	//	ContextInjectionFactory.inject(contextDataPart, ctx);
-		
-		
-		// createContextContentTable(a, sashForm, ctx);
 
 		// Set the correct weight for sahsform
 		sashForm.setWeights(new int[] { 35, 65 });

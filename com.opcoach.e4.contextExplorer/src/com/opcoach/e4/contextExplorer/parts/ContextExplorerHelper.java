@@ -13,14 +13,19 @@ package com.opcoach.e4.contextExplorer.parts;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.internal.contexts.Computation;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
-import org.eclipse.e4.core.internal.contexts.WeakGroupedListenerList;
+import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
+import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
 
 /**
  * An helper class to get information inside context management system. This
@@ -120,12 +125,7 @@ public class ContextExplorerHelper
 		
 		
 	}
-
 	
-	
-	
-	
-
 	
 	
 }
