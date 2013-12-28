@@ -196,8 +196,10 @@ public class ContextDataPart
 				return -1;
 
 			// Now can compare the text from label provider.
-			String s1 = labelProvider.getText(e1).toLowerCase();
-			String s2 = labelProvider.getText(e2).toLowerCase();
+			String lp1 = labelProvider.getText(e1);
+			String lp2 = labelProvider.getText(e2);
+			String s1 = lp1 == null ? "" : lp1.toLowerCase();
+			String s2 = lp2 == null ? "" : lp2.toLowerCase();
 			int rc = s1.compareTo(s2);
 			// If descending order, flip the direction
 			return (direction == SWT.DOWN) ? -rc : rc;
