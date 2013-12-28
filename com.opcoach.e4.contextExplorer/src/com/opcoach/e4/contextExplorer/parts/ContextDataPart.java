@@ -19,13 +19,13 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.Focus;
-import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
@@ -36,41 +36,46 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeColumn;
 
 import com.opcoach.e4.contextExplorer.search.ContextRegistry;
 
- /** This part listen to selection, and if it is an EclipseContext (or adaptable), it displays its information 
-  * It can be used in the integrated ContextExplorer Part or outside to display the context of focused part for instance 
-  * */
+/**
+ * This part listen to selection, and if it is an EclipseContext (or adaptable),
+ * it displays its information It can be used in the integrated ContextExplorer
+ * Part or outside to display the context of focused part for instance
+ * */
 public class ContextDataPart
 {
 	private TreeViewer contextDataViewer;
 
-
 	private ContextDataProvider dataProvider;
 
-
+	@Inject
+	IEventBroker broker;
 
 	private ContextEntryComparator comparator;
 
 	@Inject
 	private ContextRegistry contextRegistry;
 
+	@Inject
+	public void testInjections(ESelectionService myservice)
+	{ // Just to see if we can display it in tree
+	}
 
-	
-	@Inject public void testInjections(ESelectionService myservice) { // Just to see if we can display it in tree 
-		}
-	
-	
-	@Inject @Optional @Named("data.sample") String sField;
-	
-	@Inject @Optional public void testInjectDataSample(@Named("data.sample") String s )
+	@Inject
+	@Optional
+	@Named("data.sample")
+	String sField;
+
+	@Inject
+	@Optional
+	public void testInjectDataSample(@Named("data.sample") String s)
 	{
 		System.out.println("S value : " + s);
 	}
-
 
 	/**
 	 * Create contents of the view part.
@@ -78,31 +83,24 @@ public class ContextDataPart
 	@PostConstruct
 	public void createControls(Composite parent, IEclipseContext ctx)
 	{
-		System.out.println("Enter in createControls");
-		// A VIRER POUR TEST
-		ctx.set("data.sample", "a value");
-		
-		
+
 		parent.setLayout(new GridLayout(1, false));
-		
+
 		// TreeViewer on the top
 		contextDataViewer = new TreeViewer(parent);
 		dataProvider = ContextInjectionFactory.make(ContextDataProvider.class, ctx);
 		contextDataViewer.setContentProvider(dataProvider);
 		contextDataViewer.setLabelProvider(dataProvider);
 		// contextContentTv.setSorter(new ViewerSorter());
-		
-		
+
 		final Tree cTree = contextDataViewer.getTree();
 		cTree.setHeaderVisible(true);
 		cTree.setLinesVisible(true);
 		cTree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-
 		// tv.setInput(a);
-		contextDataViewer.setInput("Foo");  // getElements starts alone
+		contextDataViewer.setInput("Foo"); // getElements starts alone
 
-		
 		// Add columns in the tree
 		// Create the first column for the key
 		TreeViewerColumn keyCol = new TreeViewerColumn(contextDataViewer, SWT.NONE);
@@ -112,24 +110,26 @@ public class ContextDataPart
 		keyLabelProvider.setDisplayKey(true);
 		keyCol.setLabelProvider(keyLabelProvider);
 		keyCol.getColumn().setToolTipText("Key in context");
-		//keyCol.getColumn().addSelectionListener(getHeaderSelectionAdapter(contentTable, keyCol.getColumn(), 0, keyLabelProvider));
+		keyCol.getColumn().addSelectionListener(
+				getHeaderSelectionAdapter(contextDataViewer, keyCol.getColumn(), 0, keyLabelProvider));
+
+		comparator = new ContextEntryComparator(0, keyLabelProvider);
 
 		// Create the second column for the value
 		TreeViewerColumn valueCol = new TreeViewerColumn(contextDataViewer, SWT.NONE);
 		valueCol.getColumn().setWidth(600);
 		valueCol.getColumn().setText("Value");
-		//valueLabelProvider = ContextInjectionFactory.make(ContextTableLabelProvider.class, ctx);
+		ContextTableLabelProvider valueLabelProvider = ContextInjectionFactory.make(ContextTableLabelProvider.class, ctx);
 		valueCol.setLabelProvider(dataProvider);
-	//	valueCol.getColumn().addSelectionListener(getHeaderSelectionAdapter(contentTable, valueCol.getColumn(), 1, valueLabelProvider));
+		valueCol.getColumn().addSelectionListener(
+				getHeaderSelectionAdapter(contextDataViewer, valueCol.getColumn(), 1, valueLabelProvider));
 
 		// Open all the tree
 		contextDataViewer.expandAll();
-		
+
 		ColumnViewerToolTipSupport.enableFor(contextDataViewer);
 
 	}
-
-
 
 	@PreDestroy
 	public void dispose()
@@ -141,7 +141,7 @@ public class ContextDataPart
 	{
 		contextDataViewer.getControl().setFocus();
 	}
-	
+
 	@Inject
 	@Optional
 	public void listenToContext(@Named(IServiceConstants.ACTIVE_SELECTION) EclipseContext ctx)
@@ -156,7 +156,8 @@ public class ContextDataPart
 	}
 
 	/**
-	 * An entry comparator for the table, dealing with column index, keys and values
+	 * An entry comparator for the table, dealing with column index, keys and
+	 * values
 	 */
 	public class ContextEntryComparator extends ViewerComparator
 	{
@@ -176,7 +177,7 @@ public class ContextDataPart
 			return direction;
 		}
 
-		/** Called when click on table header */
+		/** Called when click on table header, reverse order */
 		public void setColumn(int column)
 		{
 			if (column == columnIndex)
@@ -194,7 +195,11 @@ public class ContextDataPart
 		@Override
 		public int compare(Viewer viewer, Object e1, Object e2)
 		{
-			// Get the text from label provider to compare.
+			// For root elements at first level, we keep Local before Inherited
+			if ((e1 == ContextDataProvider.LOCAL_VALUE_NODE) || (e2 == ContextDataProvider.LOCAL_VALUE_NODE))
+				return -1;
+
+			// Now can compare the text from label provider.
 			String s1 = labelProvider.getText(e1).toLowerCase();
 			String s2 = labelProvider.getText(e2).toLowerCase();
 			int rc = s1.compareTo(s2);
@@ -209,7 +214,8 @@ public class ContextDataPart
 
 	}
 
-	private SelectionAdapter getHeaderSelectionAdapter(final TableViewer viewer, final TableColumn column, final int columnIndex,final ILabelProvider textProvider)
+	private SelectionAdapter getHeaderSelectionAdapter(final TreeViewer viewer, final TreeColumn column, final int columnIndex,
+			final ILabelProvider textProvider)
 	{
 		SelectionAdapter selectionAdapter = new SelectionAdapter()
 			{
@@ -217,17 +223,16 @@ public class ContextDataPart
 				public void widgetSelected(SelectionEvent e)
 				{
 					viewer.setComparator(comparator);
-
 					comparator.setColumn(columnIndex);
 					comparator.setLabelProvider(textProvider);
-					viewer.getTable().setSortDirection(comparator.getDirection());
-					viewer.getTable().setSortColumn(column);
+					viewer.getTree().setSortDirection(comparator.getDirection());
+					viewer.getTree().setSortColumn(column);
 					viewer.refresh();
 				}
 			};
 		return selectionAdapter;
 	}
-	
+
 	public void refresh(boolean refreshLabel)
 	{
 		contextDataViewer.refresh(refreshLabel);

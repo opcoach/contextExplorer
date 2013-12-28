@@ -29,6 +29,7 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -36,6 +37,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.TreeItem;
 import org.osgi.framework.Bundle;
 
 import com.opcoach.e4.contextExplorer.search.ContextRegistry;
@@ -51,8 +53,8 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 	private static final Color COLOR_IF_FOUND = Display.getCurrent().getSystemColor(SWT.COLOR_BLUE);
 	private static final Color COLOR_IF_NOT_COMPUTED = Display.getCurrent().getSystemColor(SWT.COLOR_MAGENTA);
 	private static final Object[] EMPTY_RESULT = new Object[0];
-	public static final String LOCAL_VALUE_NODE = "Local values managed  by this context";
-	public static final String INHERITED_INJECTED_VALUE_NODE = "Other values injected using this context";
+	static final String LOCAL_VALUE_NODE = "Local values managed  by this context";
+	static final String INHERITED_INJECTED_VALUE_NODE = "Inherited values injected using this context";
 
 	private static final String NO_VALUES_FOUND = "No values found";
 	private static final String INJECTED_IN_FIELD = "Injected in field :";
@@ -71,6 +73,8 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 
 	@Inject
 	private ContextRegistry contextRegistry;
+
+	private TreeViewer associatedViewer;
 
 	/** Store the selected context (get the current selection) */
 	@SuppressWarnings("restriction")
@@ -94,9 +98,11 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 		selectedContext = null;
 	}
 
+	@SuppressWarnings("restriction")
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
 	{
 		selectedContext = (newInput instanceof EclipseContext) ? (EclipseContext) newInput : null;
+		associatedViewer = (TreeViewer) viewer;
 	}
 
 	public Object[] getElements(Object inputElement)
@@ -104,6 +110,7 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 		return new String[] { LOCAL_VALUE_NODE, INHERITED_INJECTED_VALUE_NODE };
 	}
 
+	@SuppressWarnings("restriction")
 	public Object[] getChildren(Object inputElement)
 	{
 		if (selectedContext == null)
@@ -114,26 +121,21 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 			Collection<Object> result = new ArrayList<Object>();
 
 			result.addAll(selectedContext.localData().entrySet());
-			
-			
-			// ICI Il faut récupérer les valeurs de context function. 
-			// Le entrySet de localContextFunction retourne des <String,Object> où Object est une IContextFunction
-			// Il faut resortir les valeurs du contexte et les afficher.. en mémorisant que c'est une contexte function
-			Map cfValues = new HashMap<String, Object>();
+
+			// For context function, we have to compute the value (if possible),
+			// and display it as a standard value
+			Map<String, Object> cfValues = new HashMap<String, Object>();
 			for (String key : selectedContext.localContextFunction().keySet())
 				try
-			{
-				cfValues.put(key, selectedContext.get(key));
-			}
-			catch (Exception e)
-			{
-				cfValues.put(key, NO_VALUE_COULD_BE_COMPUTED);
-			}
-			
+				{
+					cfValues.put(key, selectedContext.get(key));
+				} catch (Exception e)
+				{
+					cfValues.put(key, NO_VALUE_COULD_BE_COMPUTED + " (Exception : " + e.getClass().getName() + ")");
+				}
 			result.addAll(cfValues.entrySet());
-		
-			// result.addAll(selectedContext.localContextFunction().entrySet());
 			return result.toArray();
+
 		} else if (inputElement == INHERITED_INJECTED_VALUE_NODE)
 		{
 			// Search for all values injected using this context but defined in
@@ -182,7 +184,7 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "restriction" })
 	public String getText(Object element)
 	{
 		if (element instanceof Map.Entry)
@@ -209,9 +211,9 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 	{
 		// Return blue color if the string matches the search
 		String s = getText(element);
-		if (s == NO_VALUE_COULD_BE_COMPUTED)
+		if ((s != null) && s.startsWith(NO_VALUE_COULD_BE_COMPUTED))
 			return COLOR_IF_NOT_COMPUTED;
-		
+
 		return (contextRegistry.matchText(s)) ? COLOR_IF_FOUND : null;
 	}
 
@@ -219,9 +221,10 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 	public Font getFont(Object element)
 	{
 		return (element == LOCAL_VALUE_NODE || element == INHERITED_INJECTED_VALUE_NODE) ? boldFont : null;
-	
+
 	}
 
+	@SuppressWarnings("restriction")
 	@Override
 	public Image getImage(Object element)
 	{
@@ -231,9 +234,11 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 		if (element == LOCAL_VALUE_NODE)
 		{
 			return selectedContext == null ? null : imgReg.get(LOCAL_VARIABLE_IMG_KEY);
+
 		} else if (element == INHERITED_INJECTED_VALUE_NODE)
 		{
 			return selectedContext == null ? null : imgReg.get(INHERITED_VARIABLE_IMG_KEY);
+
 		} else if (element instanceof Computation)
 		{
 			// For a computation : display field or method in key column and
@@ -246,7 +251,8 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 				return imgReg.get(CONTEXT_FUNCTION_IMG_KEY);
 			else
 			{
-				// It is a value. If it is injected somewhere, display the inject image
+				// It is a value. If it is injected somewhere, display the
+				// inject image
 				return hasChildren(element) ? imgReg.get(INJECT_IMG_KEY) : imgReg.get(VALUE_IN_CONTEXT_IMG_KEY);
 			}
 
@@ -256,17 +262,34 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 
 	}
 
+	@SuppressWarnings("restriction")
 	@Override
 	public String getToolTipText(Object element)
 	{
-		if (isAContextKeyFunction(element))
+		if (element == LOCAL_VALUE_NODE)
 		{
-			String key = (String) ((Map.Entry<?,?>) element).getKey();
+			return "This part contains  values set in this context and then injected here or in children\n\n"
+					+ "If the value is injected using this context, you can expand the node to see where\n\n"
+					+ "If the value is injected using a child context you can find it in the second part for this child ";
+		} else if (element == INHERITED_INJECTED_VALUE_NODE)
+		{
+			return "This part contains the values injected using this context, but initialized in a parent context\n\n"
+					+ "Expand nodes to see where values has been injected";
+		} else if (isAContextKeyFunction(element))
+		{
+			String key = (String) ((Map.Entry<?, ?>) element).getKey();
 			String fname = (String) selectedContext.localContextFunction().get(key).getClass().getCanonicalName();
 
 			return "This value is computed by the Context Function : " + fname;
+		} else
+		{
+			if (hasChildren(element))
+				return "Expand this node to see where this value is injected";
+			else
+				return "This value is not injected using this context (search in children context)";
+
 		}
-		return super.getToolTipText(element);
+		// return super.getToolTipText(element);
 	}
 
 	@Override
@@ -287,7 +310,7 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 	 * @param element
 	 * @return true if element is a context function
 	 */
-	@SuppressWarnings("restriction")
+	@SuppressWarnings({ "restriction", "unchecked" })
 	boolean isAContextKeyFunction(Object element)
 	{
 		if (selectedContext != null && element instanceof Map.Entry)
@@ -304,10 +327,18 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 	@Override
 	public Object getParent(Object element)
 	{
-		// TODO Auto- method stub
-		return null;
+		// No parent for root nodes.
+		if (element == LOCAL_VALUE_NODE || element == INHERITED_INJECTED_VALUE_NODE)
+			return null;
+
+		TreeItem parentItem = associatedViewer.getTree().getParentItem();
+		Object data = (parentItem == null) ? null : parentItem.getData();
+		System.out.println("Parent data for element : " + element + " is " + data);
+		return data;
+
 	}
 
+	@SuppressWarnings("restriction")
 	@Override
 	public boolean hasChildren(Object element)
 	{
@@ -320,6 +351,7 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 		return (listeners != null) && (listeners.size() > 0);
 	}
 
+	@SuppressWarnings({ "restriction", "unchecked" })
 	private Set<Computation> getListeners(Object element)
 	{
 
@@ -343,6 +375,7 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 
 	}
 
+	@SuppressWarnings("restriction")
 	@Inject
 	@Optional
 	public void listenToContext(@Named(IServiceConstants.ACTIVE_SELECTION) EclipseContext ctx)

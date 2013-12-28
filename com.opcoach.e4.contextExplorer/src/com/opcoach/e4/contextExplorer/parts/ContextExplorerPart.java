@@ -70,11 +70,9 @@ public class ContextExplorerPart
 
 	private ContextTreeProvider treeContentProvider;
 
-	private ContextTableContentProvider tableContentProvider;
+	// private ContextTableContentProvider tableContentProvider;
 
-	private ContextTableLabelProvider keyLabelProvider;
 
-	private ContextTableLabelProvider valueLabelProvider;
 
 	private ImageRegistry imgReg;
 
