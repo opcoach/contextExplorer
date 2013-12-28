@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_1mkHIFNgEeO9cOYVXmSn_Q" elementId="org.eclipse.e4.ide.application" bindingContexts="_1mkHKVNgEeO9cOYVXmSn_Q">
+  <children xsi:type="basic:TrimmedWindow" xmi:id="_1mkHIVNgEeO9cOYVXmSn_Q" label="com.opcoach.e4.contextExplorer.test" width="1200" height="700">
+    <children xsi:type="advanced:PerspectiveStack" xmi:id="_1mkuQVNgEeO9cOYVXmSn_Q">
+      <children xsi:type="advanced:Perspective" xmi:id="_1mkuQlNgEeO9cOYVXmSn_Q">
+        <children xsi:type="basic:PartSashContainer" xmi:id="_SQvMkFNhEeO9cOYVXmSn_Q" elementId="com.opcoach.e4.contextexplorer.test.partsashcontainer.0" horizontal="true">
+          <children xsi:type="basic:PartStack" xmi:id="_xkcgEFNhEeO9cOYVXmSn_Q" elementId="com.opcoach.e4.contextexplorer.test.partstack.0">
+            <children xsi:type="basic:Part" xmi:id="_T8OeAFNhEeO9cOYVXmSn_Q" elementId="com.opcoach.e4.contextexplorer.contextpart" contributionURI="bundleclass://com.opcoach.e4.contextExplorer/com.opcoach.e4.contextExplorer.parts.ContextExplorerPart" label="Context Explorer"/>
+          </children>
+          <children xsi:type="basic:PartStack" xmi:id="_ywifwFNhEeO9cOYVXmSn_Q" elementId="com.opcoach.e4.contextexplorer.test.partstack.1">
+            <children xsi:type="basic:Part" xmi:id="_VuMK4FNhEeO9cOYVXmSn_Q" elementId="com.opcoach.e4.contextexplorer.contextview" contributionURI="bundleclass://org.eclipse.e4.core.contexts.debug/org.eclipse.e4.core.internal.contexts.debug.ui.ContextsView" label="Contexts view"/>
+          </children>
+        </children>
+      </children>
+    </children>
+    <mainMenu xmi:id="_1mkuOlNgEeO9cOYVXmSn_Q" elementId="menu:org.eclipse.ui.main.menu">
+      <children xsi:type="menu:Menu" xmi:id="_1mkuO1NgEeO9cOYVXmSn_Q" label="File">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_1mkuPFNgEeO9cOYVXmSn_Q" label="Open" iconURI="platform:/plugin/com.opcoach.e4.contextExplorer.test/icons/sample.gif" command="_1mkuMVNgEeO9cOYVXmSn_Q"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_1mkuPVNgEeO9cOYVXmSn_Q" label="Save" iconURI="platform:/plugin/com.opcoach.e4.contextExplorer.test/icons/save_edit.gif" command="_1mkuNFNgEeO9cOYVXmSn_Q"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_1mkuPlNgEeO9cOYVXmSn_Q" label="Quit" command="_1mkHLFNgEeO9cOYVXmSn_Q"/>
+      </children>
+      <children xsi:type="menu:Menu" xmi:id="_1mkuP1NgEeO9cOYVXmSn_Q" label="Help">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_1mkuQFNgEeO9cOYVXmSn_Q" label="About" command="_1mkuN1NgEeO9cOYVXmSn_Q"/>
+      </children>
+      <children xsi:type="menu:Menu" xmi:id="_Vzlg4FNkEeO9cOYVXmSn_Q" elementId="com.opcoach.e4.contextexplorer.test.menu.0" label="Context">
+        <children xsi:type="menu:DirectMenuItem" xmi:id="_-bT6QF0kEeOsvdTaYnupQQ" elementId="com.opcoach.e4.contextexplorer.test.directmenuitem.1" label="Add a new Context" contributionURI="bundleclass://com.opcoach.e4.contextExplorer.test/com.opcoach.e4.contextExplorer.test.handlers.CreateContext"/>
+        <children xsi:type="menu:DirectMenuItem" xmi:id="_4SC18F0kEeOsvdTaYnupQQ" elementId="com.opcoach.e4.contextexplorer.test.directmenuitem.0" label="Fill last created Context" contributionURI="bundleclass://com.opcoach.e4.contextExplorer.test/com.opcoach.e4.contextExplorer.test.handlers.FillLastCreatedContext"/>
+      </children>
+    </mainMenu>
+    <sharedElements xsi:type="basic:Part" xmi:id="_HMzlEFNhEeO9cOYVXmSn_Q" elementId="com.opcoach.e4.contextexplorer.samplepart" contributionURI="bundleclass://com.opcoach.e4.contextExplorer.test/com.opcoach.e4.contextExplorer.test.parts.SamplePart" label="Sample Part"/>
+    <trimBars xmi:id="_1mkuRlNgEeO9cOYVXmSn_Q">
+      <children xsi:type="menu:ToolBar" xmi:id="_1mkuR1NgEeO9cOYVXmSn_Q" elementId="toolbar:org.eclipse.ui.main.toolbar">
+        <children xsi:type="menu:HandledToolItem" xmi:id="_1mlVQFNgEeO9cOYVXmSn_Q" iconURI="platform:/plugin/com.opcoach.e4.contextExplorer.test/icons/sample.gif" command="_1mkuMVNgEeO9cOYVXmSn_Q"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_1mlVQVNgEeO9cOYVXmSn_Q" iconURI="platform:/plugin/com.opcoach.e4.contextExplorer.test/icons/save_edit.gif" command="_1mkuNFNgEeO9cOYVXmSn_Q"/>
+      </children>
+    </trimBars>
+  </children>
+  <handlers xmi:id="_1mkHLVNgEeO9cOYVXmSn_Q" elementId="com.opcoach.e4.contextExplorer.test.handler.quitCommand" contributionURI="bundleclass://com.opcoach.e4.contextExplorer.test/com.opcoach.e4.contextExplorer.test.handlers.QuitHandler" command="_1mkHLFNgEeO9cOYVXmSn_Q"/>
+  <handlers xmi:id="_1mkuMlNgEeO9cOYVXmSn_Q" elementId="com.opcoach.e4.contextExplorer.test.handler.openCommand" contributionURI="bundleclass://com.opcoach.e4.contextExplorer.test/com.opcoach.e4.contextExplorer.test.handlers.OpenHandler" command="_1mkuMVNgEeO9cOYVXmSn_Q"/>
+  <handlers xmi:id="_1mkuNVNgEeO9cOYVXmSn_Q" elementId="com.opcoach.e4.contextExplorer.test.handler.saveCommand" contributionURI="bundleclass://com.opcoach.e4.contextExplorer.test/com.opcoach.e4.contextExplorer.test.handlers.SaveHandler" command="_1mkuNFNgEeO9cOYVXmSn_Q"/>
+  <handlers xmi:id="_1mkuOFNgEeO9cOYVXmSn_Q" elementId="com.opcoach.e4.contextExplorer.test.handler.aboutCommand" contributionURI="bundleclass://com.opcoach.e4.contextExplorer.test/com.opcoach.e4.contextExplorer.test.handlers.AboutHandler" command="_1mkuN1NgEeO9cOYVXmSn_Q"/>
+  <bindingTables xmi:id="_1mkHLlNgEeO9cOYVXmSn_Q" bindingContext="_1mkHKVNgEeO9cOYVXmSn_Q">
+    <bindings xmi:id="_1mkuMFNgEeO9cOYVXmSn_Q" keySequence="M1+Q" command="_1mkHLFNgEeO9cOYVXmSn_Q"/>
+    <bindings xmi:id="_1mkuM1NgEeO9cOYVXmSn_Q" keySequence="M1+O" command="_1mkuMVNgEeO9cOYVXmSn_Q"/>
+    <bindings xmi:id="_1mkuNlNgEeO9cOYVXmSn_Q" keySequence="M1+S" command="_1mkuNFNgEeO9cOYVXmSn_Q"/>
+    <bindings xmi:id="_1mkuOVNgEeO9cOYVXmSn_Q" keySequence="M1+A" command="_1mkuN1NgEeO9cOYVXmSn_Q"/>
+  </bindingTables>
+  <rootContext xmi:id="_1mkHKVNgEeO9cOYVXmSn_Q" elementId="org.eclipse.ui.contexts.dialogAndWindow" name="In Dialog and Windows">
+    <children xmi:id="_1mkHKlNgEeO9cOYVXmSn_Q" elementId="org.eclipse.ui.contexts.window" name="In Windows"/>
+    <children xmi:id="_1mkHK1NgEeO9cOYVXmSn_Q" elementId="org.eclipse.ui.contexts.dialog" name="In Dialogs"/>
+  </rootContext>
+  <descriptors xmi:id="_-neG8FNgEeO9cOYVXmSn_Q" elementId="com.opcoach.e4.contextexplorer.test.partdescriptor.0" label="Sample part" allowMultiple="true" contributionURI="bundleclass://com.opcoach.e4.contextExplorer.test/com.opcoach.e4.contextExplorer.test.parts.SamplePart"/>
+  <commands xmi:id="_1mkHLFNgEeO9cOYVXmSn_Q" elementId="org.eclipse.ui.file.exit" commandName="quitCommand"/>
+  <commands xmi:id="_1mkuMVNgEeO9cOYVXmSn_Q" elementId="com.opcoach.e4.contextExplorer.test.open" commandName="openCommand"/>
+  <commands xmi:id="_1mkuNFNgEeO9cOYVXmSn_Q" elementId="org.eclipse.ui.file.save" commandName="saveCommand"/>
+  <commands xmi:id="_1mkuN1NgEeO9cOYVXmSn_Q" elementId="org.eclipse.ui.help.aboutAction" commandName="aboutCommand"/>
+  <addons xmi:id="_1mkHIlNgEeO9cOYVXmSn_Q" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
+  <addons xmi:id="_1mkHI1NgEeO9cOYVXmSn_Q" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
+  <addons xmi:id="_1mkHJFNgEeO9cOYVXmSn_Q" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
+  <addons xmi:id="_1mkHJVNgEeO9cOYVXmSn_Q" elementId="org.eclipse.e4.ui.workbench.commands.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon"/>
+  <addons xmi:id="_1mkHJlNgEeO9cOYVXmSn_Q" elementId="org.eclipse.e4.ui.workbench.handler.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.HandlerProcessingAddon"/>
+  <addons xmi:id="_1mkHJ1NgEeO9cOYVXmSn_Q" elementId="org.eclipse.e4.ui.workbench.contexts.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon"/>
+  <addons xmi:id="_1mkHKFNgEeO9cOYVXmSn_Q" elementId="org.eclipse.e4.ui.workbench.bindings.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon"/>
+</application:Application>
