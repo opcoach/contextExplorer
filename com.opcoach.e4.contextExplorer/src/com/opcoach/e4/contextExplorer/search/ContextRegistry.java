@@ -36,9 +36,6 @@ public class ContextRegistry
 
 	private boolean ignoreWildCards;
 
-	private boolean contextFunctionDisplayed;
-
-
 
 	public void setPattern(String newPattern)
 	{
@@ -55,10 +52,6 @@ public class ContextRegistry
 		this.ignoreWildCards = ignoreWildCards;
 	}
 	
-	public void setContextFunctionDisplayed(boolean contextFunctionDisplayed)
-	{
-		this.contextFunctionDisplayed = contextFunctionDisplayed;
-	}
 
 
 	/**
@@ -103,6 +96,7 @@ public class ContextRegistry
 	 * @param ctx
 	 * @return
 	 */
+	@SuppressWarnings("restriction")
 	private Collection<String> computeValues(IEclipseContext ctx)
 	{
 		Collection<String> result = new ArrayList<String>();
@@ -110,18 +104,34 @@ public class ContextRegistry
 		{
 			// Search for all strings in this context (values and context function)
 			
-			extractStringsFromMap(((EclipseContext) ctx).localData(), result);
+			EclipseContext currentContext = (EclipseContext) ctx;
+			extractStringsFromMap(currentContext.localData(), result);
 
 			// Search also in context functions
-			if (contextFunctionDisplayed)
+				extractStringsFromMap(currentContext.localContextFunction(), result);
+			
+			
+			// Search for the inherited values injected using this context but defined in
+			// parent
+			// Keep only the names that are not already displayed in local
+			// values
+			Collection<String> localKeys = currentContext.localData().keySet();
+			Collection<String> localContextFunctionsKeys = currentContext.localContextFunction().keySet();
+
+			if (currentContext.getRawListenerNames() != null)
 			{
-				extractStringsFromMap(((EclipseContext) ctx).localContextFunction(), result);
+				for (String name : currentContext.getRawListenerNames())
+				{
+					if (!localKeys.contains(name) && !localContextFunctionsKeys.contains(name))
+						result.add(name);
+				}
 			}
 
 		} else
 		{
 			log.warn("Warning : the received EclipseContext has not the expected type. It is a : " + ctx.getClass().toString());
 		}
+		
 		return result;
 	}
 

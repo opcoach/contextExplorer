@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Display;
 
 import com.opcoach.e4.contextExplorer.search.ContextRegistry;
 
+@SuppressWarnings("restriction")
 public class ContextTreeProvider extends LabelProvider implements ITreeContentProvider, IColorProvider
 {
 
@@ -80,7 +81,10 @@ public class ContextTreeProvider extends LabelProvider implements ITreeContentPr
 	@Override
 	public Object getParent(Object element)
 	{
-		// TODO Auto-generated method stub
+		if (element instanceof EclipseContext)
+		{
+			return ((EclipseContext) element).getParent();
+		}	
 		return null;
 	}
 
