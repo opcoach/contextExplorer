@@ -39,12 +39,16 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.TreeItem;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 import com.opcoach.e4.contextExplorer.search.ContextRegistry;
 
 /**
- * The column Label Provider used to display information in context data
- * treeviewer
+ * The column Label and content Provider used to display information in context
+ * data TreeViewer. Two instances for label provider are created : one for key,
+ * one for values
+ * 
+ * @see ContextDataPart
  */
 public class ContextDataProvider extends ColumnLabelProvider implements ITreeContentProvider
 {
@@ -57,6 +61,7 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 	static final String INHERITED_INJECTED_VALUE_NODE = "Inherited values injected using this context";
 
 	private static final String NO_VALUES_FOUND = "No values found";
+	private static final String UPDATED_IN_CLASS = "Updated in class :";
 	private static final String INJECTED_IN_FIELD = "Injected in field :";
 	private static final String INJECTED_IN_METHOD = "Injected in method :";
 
@@ -74,9 +79,7 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 	@Inject
 	private ContextRegistry contextRegistry;
 
-	private TreeViewer associatedViewer;
-
-	/** Store the selected context (get the current selection) */
+	/** Store the selected context (initialized in inputChanged) */
 	@SuppressWarnings("restriction")
 	private static EclipseContext selectedContext;
 
@@ -96,13 +99,13 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 	public void dispose()
 	{
 		selectedContext = null;
+		imgReg = null;
 	}
 
 	@SuppressWarnings("restriction")
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
 	{
 		selectedContext = (newInput instanceof EclipseContext) ? (EclipseContext) newInput : null;
-		associatedViewer = (TreeViewer) viewer;
 	}
 
 	public Object[] getElements(Object inputElement)
@@ -160,7 +163,7 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 		} else if (inputElement instanceof Map.Entry)
 		{
 			Set<Computation> listeners = getListeners(inputElement);
-			return listeners.toArray();
+			return (listeners == null) ? null : listeners.toArray();
 		} else if (inputElement instanceof String)
 		{
 			// This is the name of a raw listener in the inherited injected
@@ -171,12 +174,6 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 		return EMPTY_RESULT;
 	}
 
-	// private Font italicFont;
-
-	public Font getBoldFont()
-	{
-		return boldFont;
-	}
 
 	public void setDisplayKey(boolean k)
 	{
@@ -187,6 +184,9 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 	@SuppressWarnings({ "unchecked", "restriction" })
 	public String getText(Object element)
 	{
+		if (selectedContext == null)
+			return null;
+		
 		if (element instanceof Map.Entry)
 		{
 			Map.Entry<String, Object> mapEntry = (Map.Entry<String, Object>) element;
@@ -198,8 +198,14 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 			// value in value
 			String txt = super.getText(element);
 			if (displayKey)
-				return txt.contains("#") ? INJECTED_IN_METHOD : INJECTED_IN_FIELD;
-			else
+			{
+				if (txt.contains("#"))
+					return INJECTED_IN_METHOD;
+				else if (txt.contains("@"))
+					return UPDATED_IN_CLASS;
+				else
+					return INJECTED_IN_FIELD;
+			} else
 				return txt;
 		}
 
@@ -209,11 +215,12 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 	@Override
 	public Color getForeground(Object element)
 	{
-		// Return blue color if the string matches the search
+		// Return magenta color if the value could not be yet computed (for context functions)
 		String s = getText(element);
 		if ((s != null) && s.startsWith(NO_VALUE_COULD_BE_COMPUTED))
 			return COLOR_IF_NOT_COMPUTED;
 
+		// Return blue color if the string matches the search
 		return (contextRegistry.matchText(s)) ? COLOR_IF_FOUND : null;
 	}
 
@@ -241,10 +248,17 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 
 		} else if (element instanceof Computation)
 		{
-			// For a computation : display field or method in key column and
+			// For a computation : display field, method or class in key column and
 			// value in value column
 			String txt = super.getText(element);
-			return txt.contains("#") ? imgReg.get(PUBLIC_METHOD_IMG_KEY) : imgReg.get(PUBLIC_FIELD_IMG_KEY);
+
+			if (txt.contains("#"))
+				return imgReg.get(PUBLIC_METHOD_IMG_KEY);
+			else if (txt.contains("@"))
+				return imgReg.get(CONTEXT_FUNCTION_IMG_KEY);
+			else
+				return imgReg.get(PUBLIC_FIELD_IMG_KEY);
+
 		} else if (element instanceof Map.Entry)
 		{
 			if (isAContextKeyFunction(element))
@@ -280,16 +294,20 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 			String key = (String) ((Map.Entry<?, ?>) element).getKey();
 			String fname = (String) selectedContext.localContextFunction().get(key).getClass().getCanonicalName();
 
-			return "This value is computed by the Context Function : " + fname;
+			return "This value is created by the Context Function : " + fname;
 		} else
 		{
 			if (hasChildren(element))
-				return "Expand this node to see where this value is injected";
+				return "Expand this node to see where this value is injected or updated";
 			else
-				return "This value is not injected using this context (search in children context)";
+			{
+				if (element instanceof Map.Entry)
+					return "This value is set here but not injected using this context (look in children context)";
+			}
 
 		}
-		// return super.getToolTipText(element);
+		
+		return super.getToolTipText(element);
 	}
 
 	@Override
@@ -327,14 +345,11 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 	@Override
 	public Object getParent(Object element)
 	{
-		// No parent for root nodes.
 		if (element == LOCAL_VALUE_NODE || element == INHERITED_INJECTED_VALUE_NODE)
 			return null;
 
-		TreeItem parentItem = associatedViewer.getTree().getParentItem();
-		Object data = (parentItem == null) ? null : parentItem.getData();
-		System.out.println("Parent data for element : " + element + " is " + data);
-		return data;
+		// Not computed
+		return null;
 
 	}
 
@@ -375,17 +390,10 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 
 	}
 
-	@SuppressWarnings("restriction")
-	@Inject
-	@Optional
-	public void listenToContext(@Named(IServiceConstants.ACTIVE_SELECTION) EclipseContext ctx)
-	{
-		selectedContext = ctx;
-	}
 
 	private void initializeImageRegistry()
 	{
-		Bundle b = org.eclipse.core.runtime.Platform.getBundle("com.opcoach.e4.contextExplorer");
+		Bundle b = FrameworkUtil.getBundle(this.getClass());
 		imgReg = new ImageRegistry();
 
 		imgReg.put(CONTEXT_FUNCTION_IMG_KEY, ImageDescriptor.createFromURL(b.getEntry(CONTEXT_FUNCTION_IMG_KEY)));
@@ -405,7 +413,6 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 		String fontName = fontData[0].getName();
 		FontRegistry registry = JFaceResources.getFontRegistry();
 		boldFont = registry.getBold(fontName);
-		// italicFont = registry.getItalic(fontName);
 	}
 
 }

@@ -28,14 +28,14 @@ import org.eclipse.swt.widgets.Display;
 import com.opcoach.e4.contextExplorer.search.ContextRegistry;
 
 @SuppressWarnings("restriction")
-public class ContextTreeProvider extends LabelProvider implements ITreeContentProvider, IColorProvider
+public class ContextExplorerProvider extends LabelProvider implements ITreeContentProvider, IColorProvider
 {
 
 	@Inject
 	private ContextRegistry contextRegistry;
 
 	@Inject
-	public ContextTreeProvider()
+	public ContextExplorerProvider()
 	{
 
 	}
@@ -43,15 +43,11 @@ public class ContextTreeProvider extends LabelProvider implements ITreeContentPr
 	@Override
 	public void dispose()
 	{
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
 	{
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -103,7 +99,7 @@ public class ContextTreeProvider extends LabelProvider implements ITreeContentPr
 	@Override
 	public Color getForeground(Object element)
 	{
-		// Return a color if a text contained in this node containes the text.
+		// Return a color if a text contained in this node contains the text.
 		if (element instanceof IEclipseContext && contextRegistry.containsText((IEclipseContext) element))
 		{
 			return Display.getCurrent().getSystemColor(SWT.COLOR_BLUE);

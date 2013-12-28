@@ -13,23 +13,16 @@ package com.opcoach.e4.contextExplorer.parts;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
-import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.internal.contexts.EclipseContext;
-import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
-import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
 
 /**
  * An helper class to get information inside context management system. This
  * class uses internal fields or methods defined in EclipseContext
+ * Could be updated in the future.
  * 
  * @author olivier
  * 
@@ -73,59 +66,7 @@ public class ContextExplorerHelper
 
 	}
 	
-	
-	static void displayContextListener(EclipseContext ctx, String indent)
-	{
-		
-		
-		
-		for (String c : ctx.getRawListenerNames())
-		{
-			System.out.println(indent+"Raw Listener : " + c);
-			// System.out.println(indent+"Computation ("+c.getClass().getSimpleName() + ") : " + c.toString() + " valid = " + c.isValid());
-		}		
-		
-		
-	/*	Collection<IEclipseContext> result = Collections.emptyList();
-		if (indent == null)
-			indent = "";
-		try
-		{
-			// Must use introspection to get the weak hash map (no getter).
-			Field f = EclipseContext.class.getDeclaredField("weakListeners");
-			f.setAccessible(true);
-			@SuppressWarnings("unchecked")
-			WeakGroupedListenerList listeners = (WeakGroupedListenerList) f.get(ctx);
 
-			System.out.println(indent+" -----     Names ------   ");
-			for (String n : listeners.getNames())
-				System.out.println(indent+"group name in weaklisteners : " + n);
-			System.out.println(indent+" -----     Computations ------   ");
-			for (Computation c : listeners.getListeners())
-			{
-				System.out.println(indent+"Computation ("+c.getClass().getSimpleName() + ") : " + c.toString() + " valid = " + c.isValid());
-			}
-		} catch (SecurityException e)
-		{
-			e.printStackTrace();
-		} catch (NoSuchFieldException e)
-		{
-			e.printStackTrace();
-		} catch (IllegalArgumentException e)
-		{
-			e.printStackTrace();
-		} catch (IllegalAccessException e)
-		{
-			e.printStackTrace();
-		}
-
-		
-		*/
-		
-		
-		
-	}
-	
 	
 	
 }

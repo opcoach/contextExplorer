@@ -25,7 +25,6 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
@@ -39,12 +38,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 
-import com.opcoach.e4.contextExplorer.search.ContextRegistry;
-
 /**
- * This part listen to selection, and if it is an EclipseContext (or adaptable),
+ * This part listen to selection, and if it is an EclipseContext,
  * it displays its information It can be used in the integrated ContextExplorer
- * Part or outside to display the context of focused part for instance
+ * Part or (in the future) outside to display the context of focused part for instance
  * */
 public class ContextDataPart
 {
@@ -57,8 +54,6 @@ public class ContextDataPart
 
 	private ContextEntryComparator comparator;
 
-	@Inject
-	private ContextRegistry contextRegistry;
 
 	@Inject
 	public void testInjections(ESelectionService myservice)
@@ -114,12 +109,13 @@ public class ContextDataPart
 				getHeaderSelectionAdapter(contextDataViewer, keyCol.getColumn(), 0, keyLabelProvider));
 
 		comparator = new ContextEntryComparator(0, keyLabelProvider);
+		contextDataViewer.setComparator(comparator);
 
 		// Create the second column for the value
 		TreeViewerColumn valueCol = new TreeViewerColumn(contextDataViewer, SWT.NONE);
 		valueCol.getColumn().setWidth(600);
 		valueCol.getColumn().setText("Value");
-		ContextTableLabelProvider valueLabelProvider = ContextInjectionFactory.make(ContextTableLabelProvider.class, ctx);
+		ContextDataProvider valueLabelProvider = ContextInjectionFactory.make(ContextDataProvider.class, ctx);
 		valueCol.setLabelProvider(dataProvider);
 		valueCol.getColumn().addSelectionListener(
 				getHeaderSelectionAdapter(contextDataViewer, valueCol.getColumn(), 1, valueLabelProvider));
@@ -142,6 +138,7 @@ public class ContextDataPart
 		contextDataViewer.getControl().setFocus();
 	}
 
+	@SuppressWarnings("restriction")
 	@Inject
 	@Optional
 	public void listenToContext(@Named(IServiceConstants.ACTIVE_SELECTION) EclipseContext ctx)
@@ -151,7 +148,6 @@ public class ContextDataPart
 			return;
 		}
 		contextDataViewer.setInput(ctx);
-		contextDataViewer.setComparator(null);
 		contextDataViewer.expandToLevel(2);
 	}
 
@@ -168,7 +164,7 @@ public class ContextDataPart
 		public ContextEntryComparator(int columnIndex, ILabelProvider defaultLabelProvider)
 		{
 			this.columnIndex = columnIndex;
-			direction = SWT.DOWN;
+			direction = SWT.UP;
 			labelProvider = defaultLabelProvider;
 		}
 
