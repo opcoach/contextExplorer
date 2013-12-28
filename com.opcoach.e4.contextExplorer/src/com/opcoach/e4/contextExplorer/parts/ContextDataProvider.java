@@ -58,7 +58,7 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 	private static final Color COLOR_IF_NOT_COMPUTED = Display.getCurrent().getSystemColor(SWT.COLOR_MAGENTA);
 	private static final Object[] EMPTY_RESULT = new Object[0];
 	static final String LOCAL_VALUE_NODE = "Local values managed  by this context";
-	static final String INHERITED_INJECTED_VALUE_NODE = "Inherited values injected using this context";
+	static final String INHERITED_INJECTED_VALUE_NODE = "Inherited values injected or updated using this context";
 
 	private static final String NO_VALUES_FOUND = "No values found";
 	private static final String UPDATED_IN_CLASS = "Updated in class :";
@@ -287,8 +287,8 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 					+ "If the value is injected using a child context you can find it in the second part for this child ";
 		} else if (element == INHERITED_INJECTED_VALUE_NODE)
 		{
-			return "This part contains the values injected using this context, but initialized in a parent context\n\n"
-					+ "Expand nodes to see where values has been injected";
+			return "This part contains the values injected or updated using this context, but initialized in a parent context\n\n"
+					+ "Expand nodes to see where values are injected or updated";
 		} else if (isAContextKeyFunction(element))
 		{
 			String key = (String) ((Map.Entry<?, ?>) element).getKey();
