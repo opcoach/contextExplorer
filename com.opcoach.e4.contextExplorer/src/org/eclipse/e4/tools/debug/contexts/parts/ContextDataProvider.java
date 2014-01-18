@@ -8,7 +8,7 @@
  * Contributors:
  *     OPCoach - initial API and implementation
  *******************************************************************************/
-package com.opcoach.e4.contextExplorer.parts;
+package org.eclipse.e4.tools.debug.contexts.parts;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,19 +17,16 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
-import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.internal.contexts.Computation;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
-import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.tools.debug.contexts.search.ContextRegistry;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -37,11 +34,8 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.TreeItem;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
-
-import com.opcoach.e4.contextExplorer.search.ContextRegistry;
 
 /**
  * The column Label and content Provider used to display information in context

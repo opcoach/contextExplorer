@@ -8,7 +8,7 @@
  * Contributors:
  *     OPCoach - initial API and implementation
  *******************************************************************************/
-package com.opcoach.e4.contextExplorer.parts;
+package org.eclipse.e4.tools.debug.contexts.parts;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
