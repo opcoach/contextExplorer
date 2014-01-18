@@ -5,7 +5,7 @@
       <children xsi:type="advanced:Perspective" xmi:id="_1mkuQlNgEeO9cOYVXmSn_Q">
         <children xsi:type="basic:PartSashContainer" xmi:id="_SQvMkFNhEeO9cOYVXmSn_Q" elementId="com.opcoach.e4.contextexplorer.test.partsashcontainer.0" horizontal="true">
           <children xsi:type="basic:PartStack" xmi:id="_xkcgEFNhEeO9cOYVXmSn_Q" elementId="com.opcoach.e4.contextexplorer.test.partstack.0">
-            <children xsi:type="basic:Part" xmi:id="_T8OeAFNhEeO9cOYVXmSn_Q" elementId="com.opcoach.e4.contextexplorer.contextpart" contributionURI="bundleclass://com.opcoach.e4.contextExplorer/com.opcoach.e4.contextExplorer.parts.ContextExplorerPart" label="Context Explorer"/>
+            <children xsi:type="basic:Part" xmi:id="_T8OeAFNhEeO9cOYVXmSn_Q" elementId="com.opcoach.e4.contextexplorer.contextpart" contributionURI="bundleclass://com.opcoach.e4.contextExplorer/org.eclipse.e4.tools.debug.contexts.parts.ContextExplorerPart" label="Context Explorer"/>
           </children>
           <children xsi:type="basic:PartStack" xmi:id="_ywifwFNhEeO9cOYVXmSn_Q" elementId="com.opcoach.e4.contextexplorer.test.partstack.1">
             <children xsi:type="basic:Part" xmi:id="_VuMK4FNhEeO9cOYVXmSn_Q" elementId="com.opcoach.e4.contextexplorer.contextview" contributionURI="bundleclass://org.eclipse.e4.core.contexts.debug/org.eclipse.e4.core.internal.contexts.debug.ui.ContextsView" label="Contexts view"/>
