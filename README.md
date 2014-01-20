@@ -1,12 +1,14 @@
-contextExplorer
+Eclipse 4 context Spy
 ===============
 
-  ------------------  January 2014 changes ------------------------
+  January 2014 changes 
+  ---------------------
+  
     This code is now moving to Eclipse 4 tools. See : 
     
-         <li>https://bugs.eclipse.org/bugs/show_bug.cgi?id=422543</li>
+         <li>Bug     : https://bugs.eclipse.org/bugs/show_bug.cgi?id=422543</li>
          
-         <li>https://dev.eclipse.org/ipzilla/show_bug.cgi?id=7865 </li>
+         <li>Ipzilla : https://dev.eclipse.org/ipzilla/show_bug.cgi?id=7865 </li>
     
     Projects and packages have been renamed. 
     
@@ -14,8 +16,9 @@ contextExplorer
     
     In this new branch, you must now refer to ContextSpyPart instead of ContextExplorerPart :
        bundleclass://org.eclipse.e4.tools.context.spy/org.eclipse.e4.tools.context.spy.ContextSpyPart
-  -----------------------------------------------------------------
-
+       
+       
+       
 
 A context Explorer for Eclipse 4 provided by OPCoach
 
