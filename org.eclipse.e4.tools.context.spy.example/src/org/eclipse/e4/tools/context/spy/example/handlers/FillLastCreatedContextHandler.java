@@ -14,7 +14,7 @@ public class FillLastCreatedContextHandler {
 	public void execute(MApplication appli) {
 		
 	  // Fill the last created context with a set of values
-		lastCreatedContext.set("com.opcoach.e4.contextExplorer.test.sample", "Sample");
+		lastCreatedContext.set("org.eclipse.e4.tools.context.spy.example", "Sample Data");
 		lastCreatedContext.set(IEclipseContext.class, lastCreatedContext);
 	}
 		

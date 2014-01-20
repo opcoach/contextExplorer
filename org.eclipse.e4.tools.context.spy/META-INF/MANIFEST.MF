@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: ContextExplorer
+Bundle-Name: Context Spy
 Bundle-SymbolicName: org.eclipse.e4.tools.context.spy;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: OPCOACH

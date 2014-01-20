@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_1mkHIFNgEeO9cOYVXmSn_Q" elementId="org.eclipse.e4.ide.application" bindingContexts="_1mkHKVNgEeO9cOYVXmSn_Q">
-  <children xsi:type="basic:TrimmedWindow" xmi:id="_1mkHIVNgEeO9cOYVXmSn_Q" label="com.opcoach.e4.contextExplorer.test" width="1200" height="700">
-    <children xsi:type="basic:PartSashContainer" xmi:id="_SQvMkFNhEeO9cOYVXmSn_Q" elementId="com.opcoach.e4.contextexplorer.test.partsashcontainer.0" horizontal="true">
-      <children xsi:type="basic:PartStack" xmi:id="_xkcgEFNhEeO9cOYVXmSn_Q" elementId="com.opcoach.e4.contextexplorer.test.partstack.0">
+  <children xsi:type="basic:TrimmedWindow" xmi:id="_1mkHIVNgEeO9cOYVXmSn_Q" label="Context Spy Test" width="1200" height="700">
+    <children xsi:type="basic:PartSashContainer" xmi:id="_SQvMkFNhEeO9cOYVXmSn_Q" elementId="org.eclipse.e4.tools.context.spy.example.partsashcontainer" horizontal="true">
+      <children xsi:type="basic:PartStack" xmi:id="_xkcgEFNhEeO9cOYVXmSn_Q" elementId="org.eclipse.e4.tools.context.spy.example.partstack.0">
         <children xsi:type="basic:Part" xmi:id="_T8OeAFNhEeO9cOYVXmSn_Q" elementId="org.eclipse.e4.tools.context.spy.example.contextspy" contributionURI="bundleclass://org.eclipse.e4.tools.context.spy/org.eclipse.e4.tools.context.spy.ContextSpyPart" label="Context Spy"/>
       </children>
-      <children xsi:type="basic:PartStack" xmi:id="_ywifwFNhEeO9cOYVXmSn_Q" elementId="com.opcoach.e4.contextexplorer.test.partstack.1">
+      <children xsi:type="basic:PartStack" xmi:id="_ywifwFNhEeO9cOYVXmSn_Q" elementId="org.eclipse.e4.tools.context.spy.example.partstack.1">
         <children xsi:type="basic:Part" xmi:id="_VuMK4FNhEeO9cOYVXmSn_Q" elementId="org.eclipse.e4.tools.context.spy.example.contextview" contributionURI="bundleclass://org.eclipse.e4.core.contexts.debug/org.eclipse.e4.core.internal.contexts.debug.ui.ContextsView" label="Contexts view (Old context debug)"/>
       </children>
     </children>
     <mainMenu xmi:id="_1mkuOlNgEeO9cOYVXmSn_Q" elementId="menu:org.eclipse.ui.main.menu">
-      <children xsi:type="menu:Menu" xmi:id="_1mkuO1NgEeO9cOYVXmSn_Q" label="File">
+      <children xsi:type="menu:Menu" xmi:id="_1mkuO1NgEeO9cOYVXmSn_Q" elementId="file" label="File">
         <children xsi:type="menu:HandledMenuItem" xmi:id="_1mkuPlNgEeO9cOYVXmSn_Q" label="Quit" command="_1mkHLFNgEeO9cOYVXmSn_Q"/>
       </children>
-      <children xsi:type="menu:Menu" xmi:id="_1mkuP1NgEeO9cOYVXmSn_Q" label="Help">
+      <children xsi:type="menu:Menu" xmi:id="_1mkuP1NgEeO9cOYVXmSn_Q" elementId="help" label="Help">
         <children xsi:type="menu:HandledMenuItem" xmi:id="_1mkuQFNgEeO9cOYVXmSn_Q" label="About" command="_1mkuN1NgEeO9cOYVXmSn_Q"/>
       </children>
-      <children xsi:type="menu:Menu" xmi:id="_Vzlg4FNkEeO9cOYVXmSn_Q" elementId="com.opcoach.e4.contextexplorer.test.menu.0" label="Context">
+      <children xsi:type="menu:Menu" xmi:id="_Vzlg4FNkEeO9cOYVXmSn_Q" elementId="org.eclipse.e4.tools.context.spy.example.menu.context" label="Context">
         <children xsi:type="menu:DirectMenuItem" xmi:id="_-bT6QF0kEeOsvdTaYnupQQ" elementId="org.eclipse.e4.tools.context.spy.example.directmenuitem.addcontext" label="Add a new Context" contributionURI="bundleclass://org.eclipse.e4.tools.context.spy.example/org.eclipse.e4.tools.context.spy.example.handlers.CreateContextHandler"/>
         <children xsi:type="menu:DirectMenuItem" xmi:id="_4SC18F0kEeOsvdTaYnupQQ" elementId="org.eclipse.e4.tools.context.spy.example.directmenuitem.filllastcontext" label="Fill last created Context" contributionURI="bundleclass://org.eclipse.e4.tools.context.spy.example/org.eclipse.e4.tools.context.spy.example.handlers.FillLastCreatedContextHandler"/>
       </children>
     </mainMenu>
   </children>
-  <handlers xmi:id="_1mkHLVNgEeO9cOYVXmSn_Q" elementId="com.opcoach.e4.contextExplorer.test.handler.quitCommand" contributionURI="bundleclass://org.eclipse.e4.tools.context.spy.example/org.eclipse.e4.tools.context.spy.example.handlers.QuitHandler" command="_1mkHLFNgEeO9cOYVXmSn_Q"/>
-  <handlers xmi:id="_1mkuOFNgEeO9cOYVXmSn_Q" elementId="com.opcoach.e4.contextExplorer.test.handler.aboutCommand" contributionURI="bundleclass://org.eclipse.e4.tools.context.spy.example/org.eclipse.e4.tools.context.spy.example.handlers.AboutHandler" command="_1mkuN1NgEeO9cOYVXmSn_Q"/>
+  <handlers xmi:id="_1mkHLVNgEeO9cOYVXmSn_Q" elementId="org.eclipse.e4.tools.context.spy.example.handler.quitCommand" contributionURI="bundleclass://org.eclipse.e4.tools.context.spy.example/org.eclipse.e4.tools.context.spy.example.handlers.QuitHandler" command="_1mkHLFNgEeO9cOYVXmSn_Q"/>
+  <handlers xmi:id="_1mkuOFNgEeO9cOYVXmSn_Q" elementId="org.eclipse.e4.tools.context.spy.example.handler.aboutCommand" contributionURI="bundleclass://org.eclipse.e4.tools.context.spy.example/org.eclipse.e4.tools.context.spy.example.handlers.AboutHandler" command="_1mkuN1NgEeO9cOYVXmSn_Q"/>
   <bindingTables xmi:id="_1mkHLlNgEeO9cOYVXmSn_Q" bindingContext="_1mkHKVNgEeO9cOYVXmSn_Q">
     <bindings xmi:id="_1mkuMFNgEeO9cOYVXmSn_Q" keySequence="M1+Q" command="_1mkHLFNgEeO9cOYVXmSn_Q"/>
     <bindings xmi:id="_1mkuM1NgEeO9cOYVXmSn_Q" keySequence="M1+O"/>
@@ -34,7 +34,6 @@
     <children xmi:id="_1mkHKlNgEeO9cOYVXmSn_Q" elementId="org.eclipse.ui.contexts.window" name="In Windows"/>
     <children xmi:id="_1mkHK1NgEeO9cOYVXmSn_Q" elementId="org.eclipse.ui.contexts.dialog" name="In Dialogs"/>
   </rootContext>
-  <descriptors xmi:id="_-neG8FNgEeO9cOYVXmSn_Q" elementId="com.opcoach.e4.contextexplorer.test.partdescriptor.0" label="Sample part" allowMultiple="true" contributionURI="bundleclass://com.opcoach.e4.contextExplorer.test/com.opcoach.e4.contextExplorer.test.parts.SamplePart"/>
   <commands xmi:id="_1mkHLFNgEeO9cOYVXmSn_Q" elementId="org.eclipse.ui.file.exit" commandName="quitCommand"/>
   <commands xmi:id="_1mkuN1NgEeO9cOYVXmSn_Q" elementId="org.eclipse.ui.help.aboutAction" commandName="aboutCommand"/>
   <addons xmi:id="_1mkHIlNgEeO9cOYVXmSn_Q" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
