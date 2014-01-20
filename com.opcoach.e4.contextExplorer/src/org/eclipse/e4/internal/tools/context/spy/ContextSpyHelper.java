@@ -8,7 +8,7 @@
  * Contributors:
  *     OPCoach - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.tools.debug.contexts.parts;
+package org.eclipse.e4.internal.tools.context.spy;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -20,14 +20,14 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.osgi.framework.BundleContext;
 
 /**
- * An helper class to get information inside context management system. This
+ * A helper class to get information inside context management system. This
  * class uses internal fields or methods defined in EclipseContext
  * Could be updated in the future.
  * 
  * @author olivier
  * 
  */
-public class ContextExplorerHelper
+public class ContextSpyHelper
 {
 
 	/**
@@ -36,7 +36,7 @@ public class ContextExplorerHelper
 	 * 
 	 * @return a collection of contexts created by EclipseContextFactory
 	 */
-	static Collection<IEclipseContext> getAllBundleContexts()
+	public static Collection<IEclipseContext> getAllBundleContexts()
 	{
 		Collection<IEclipseContext> result = Collections.emptyList();
 		try

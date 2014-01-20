@@ -1,4 +1,4 @@
-package org.eclipse.e4.tools.debug.contexts.search;
+package org.eclipse.e4.internal.tools.context.spy.search;
 
 /*******************************************************************************
  * Copyright (c) 2000, 2006 IBM Corporation and others.

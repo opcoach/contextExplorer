@@ -8,7 +8,7 @@
  * Contributors:
  *     OPCoach - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.tools.debug.contexts.parts;
+package org.eclipse.e4.tools.context.spy;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -16,7 +16,10 @@ import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.tools.debug.contexts.search.ContextRegistry;
+import org.eclipse.e4.internal.tools.context.spy.ContextDataPart;
+import org.eclipse.e4.internal.tools.context.spy.ContextSpyHelper;
+import org.eclipse.e4.internal.tools.context.spy.ContextSpyProvider;
+import org.eclipse.e4.internal.tools.context.spy.search.ContextRegistry;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
@@ -43,7 +46,14 @@ import org.eclipse.swt.widgets.Text;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
-public class ContextExplorerPart
+/** This class is the main part of the context spy. 
+ * This part must be added in an application model to spy the contexts
+ * It creates a treeviewer and the context data part listening to context selection
+ * This part must be included in E4 application to display the contexts
+ * @author olivier
+ *
+ */
+public class ContextSpyPart
 {
 
 	private TreeViewer contextTreeViewer;
@@ -51,7 +61,7 @@ public class ContextExplorerPart
 	@Inject
 	private ESelectionService selService;
 
-	private ContextExplorerProvider treeContentProvider;
+	private ContextSpyProvider treeContentProvider;
 
 
 	private ImageRegistry imgReg;
@@ -197,13 +207,13 @@ public class ContextExplorerPart
 
 		// TreeViewer on the top
 		contextTreeViewer = new TreeViewer(sashForm);
-		treeContentProvider = ContextInjectionFactory.make(ContextExplorerProvider.class, ctx);
+		treeContentProvider = ContextInjectionFactory.make(ContextSpyProvider.class, ctx);
 		contextTreeViewer.setContentProvider(treeContentProvider);
 		contextTreeViewer.setLabelProvider(treeContentProvider);
 		contextTreeViewer.setSorter(new ViewerSorter());
 
 		// tv.setInput(a);
-		contextTreeViewer.setInput(ContextExplorerHelper.getAllBundleContexts());
+		contextTreeViewer.setInput(ContextSpyHelper.getAllBundleContexts());
 
 		contextTreeViewer.addSelectionChangedListener(new ISelectionChangedListener()
 			{

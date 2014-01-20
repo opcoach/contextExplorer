@@ -8,7 +8,7 @@
  * Contributors:
  *     OPCoach - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.tools.debug.contexts.search;
+package org.eclipse.e4.internal.tools.context.spy.search;
 
 import java.util.ArrayList;
 import java.util.Collection;

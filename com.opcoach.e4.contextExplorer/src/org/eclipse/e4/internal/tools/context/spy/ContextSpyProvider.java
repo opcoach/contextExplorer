@@ -8,7 +8,7 @@
  * Contributors:
  *     OPCoach - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.tools.debug.contexts.parts;
+package org.eclipse.e4.internal.tools.context.spy;
 
 import java.util.Collection;
 
@@ -16,7 +16,7 @@ import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
-import org.eclipse.e4.tools.debug.contexts.search.ContextRegistry;
+import org.eclipse.e4.internal.tools.context.spy.search.ContextRegistry;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -27,14 +27,19 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 
 @SuppressWarnings("restriction")
-public class ContextExplorerProvider extends LabelProvider implements ITreeContentProvider, IColorProvider
+/** This label and treecontent provider is used by ContextSpyPart to display 
+ * available contexts.
+ * @author olivier
+ *
+ */
+public class ContextSpyProvider extends LabelProvider implements ITreeContentProvider, IColorProvider
 {
 
 	@Inject
 	private ContextRegistry contextRegistry;
 
 	@Inject
-	public ContextExplorerProvider()
+	public ContextSpyProvider()
 	{
 
 	}

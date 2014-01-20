@@ -8,7 +8,7 @@
  * Contributors:
  *     OPCoach - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.tools.debug.contexts.parts;
+package org.eclipse.e4.internal.tools.context.spy;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -19,10 +19,8 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
-import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -40,8 +38,8 @@ import org.eclipse.swt.widgets.TreeColumn;
 
 /**
  * This part listen to selection, and if it is an EclipseContext,
- * it displays its information It can be used in the integrated ContextExplorer
- * Part or (in the future) outside to display the context of focused part for instance
+ * it displays its information It is used in the integrated ContextSpyPart
+ * and (in the future) it could be used outside to display the context of focused part for instance
  * */
 public class ContextDataPart
 {
@@ -49,28 +47,8 @@ public class ContextDataPart
 
 	private ContextDataProvider dataProvider;
 
-	@Inject
-	IEventBroker broker;
-
 	private ContextEntryComparator comparator;
 
-
-	@Inject
-	public void testInjections(ESelectionService myservice)
-	{ // Just to see if we can display it in tree
-	}
-
-	@Inject
-	@Optional
-	@Named("data.sample")
-	String sField;
-
-	@Inject
-	@Optional
-	public void testInjectDataSample(@Named("data.sample") String s)
-	{
-		System.out.println("S value : " + s);
-	}
 
 	/**
 	 * Create contents of the view part.

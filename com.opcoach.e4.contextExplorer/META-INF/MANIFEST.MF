@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ContextExplorer
-Bundle-SymbolicName: com.opcoach.e4.contextExplorer;singleton:=true
+Bundle-SymbolicName: org.eclipse.e4.tools.context.spy;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: OPCOACH
-Export-Package: org.eclipse.e4.tools.debug.contexts.parts
+Export-Package: org.eclipse.e4.tools.context.spy
 Require-Bundle: javax.inject;bundle-version="1.0.0",
  org.eclipse.jface;bundle-version="3.9.0",
  org.eclipse.e4.core.contexts;bundle-version="1.2.0",
@@ -17,4 +17,4 @@ Require-Bundle: javax.inject;bundle-version="1.0.0",
  org.eclipse.e4.core.services;bundle-version="1.1.0",
  org.eclipse.e4.ui.workbench.swt
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: javax.annotation;version="1.0.0"
+Import-Package: javax.annotation;version="1.1.0"

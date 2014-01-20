@@ -8,7 +8,7 @@
  * Contributors:
  *     OPCoach - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.tools.debug.contexts.parts;
+package org.eclipse.e4.internal.tools.context.spy;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,7 +20,7 @@ import javax.inject.Inject;
 
 import org.eclipse.e4.core.internal.contexts.Computation;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
-import org.eclipse.e4.tools.debug.contexts.search.ContextRegistry;
+import org.eclipse.e4.internal.tools.context.spy.search.ContextRegistry;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -62,10 +62,10 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 	// Image keys constants
 	private static final String PUBLIC_METHOD_IMG_KEY = "icons/methpub_obj.gif";
 	private static final String PUBLIC_FIELD_IMG_KEY = "icons/field_public_obj.gif";
-	private static final String VALUE_IN_CONTEXT_IMG_KEY = "icons/valueInContext.gif";
+	private static final String VALUE_IN_CONTEXT_IMG_KEY = "icons/valueincontext.gif";
 	private static final String INHERITED_VARIABLE_IMG_KEY = "icons/inher_co.gif";
-	private static final String LOCAL_VARIABLE_IMG_KEY = "icons/Letter-L-icon.png";
-	private static final String CONTEXT_FUNCTION_IMG_KEY = "icons/contextFunction.gif";
+	private static final String LOCAL_VARIABLE_IMG_KEY = "icons/letter-l-icon.png";
+	private static final String CONTEXT_FUNCTION_IMG_KEY = "icons/contextfunction.gif";
 	private static final String INJECT_IMG_KEY = "icons/annotation_obj.gif";
 
 	private ImageRegistry imgReg;
