@@ -3,7 +3,9 @@ contextExplorer
 
   ------------------  January 2014 changes ------------------------
     This code is now moving to Eclipse 4 tools. See : 
+    
          https://bugs.eclipse.org/bugs/show_bug.cgi?id=422543
+         
          https://dev.eclipse.org/ipzilla/show_bug.cgi?id=7865 
     
     Projects and packages have been renamed. 
