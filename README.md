@@ -1,5 +1,16 @@
 Eclipse 4 context Spy
-===============
+======================
+  
+ March 2014 changes
+ ------------------
+ 
+ The master branch can be used (contains now the keyboard shortcut to open it : ALT SHIFT F10)
+ 
+ This short cut will be available soon in the latest version of e4 tools (when review will be completed)
+ 
+ You can add this plugin in your launch configuration and the short cut will be available.
+ 
+
 
   January 2014 changes 
   ---------------------
