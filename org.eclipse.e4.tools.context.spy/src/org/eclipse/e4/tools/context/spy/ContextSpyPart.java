@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     OPCoach - initial API and implementation
+ *     Olivier Prouvost <olivier.prouvost@opcoach.com> - initial API and implementation
  *******************************************************************************/
 package org.eclipse.e4.tools.context.spy;
 
@@ -47,14 +47,17 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
 /** This class is the main part of the context spy. 
- * This part must be added in an application model to spy the contexts
  * It creates a treeviewer and the context data part listening to context selection
- * This part must be included in E4 application to display the contexts
- * @author olivier
- *
  */
 public class ContextSpyPart
 {
+	
+	private static final String ICON_COLLAPSEALL = "icons/collapseall.gif";
+	private static final String ICON_EXPANDALL = "icons/expandall.gif";
+	private static final String ICON_REFRESH = "icons/refresh.gif";
+
+	// The ID for this part descriptor
+	static final String CONTEXT_SPY_VIEW_DESC = "org.eclipse.e4.tools.context.spy.view";
 
 	private TreeViewer contextTreeViewer;
 
@@ -63,7 +66,6 @@ public class ContextSpyPart
 
 	private ContextSpyProvider treeContentProvider;
 
-
 	private ImageRegistry imgReg;
 
 	@Inject
@@ -71,17 +73,15 @@ public class ContextSpyPart
 
 	private ContextDataPart contextDataPart;
 
-	
-	@Inject public void testInjections(ESelectionService myservice) { }
-	
+		
 	@Inject
 	private void initializeImageRegistry()
 	{
 		Bundle b = FrameworkUtil.getBundle(this.getClass());
 		imgReg = new ImageRegistry();
-		imgReg.put("collapseall", ImageDescriptor.createFromURL(b.getEntry("icons/collapseall.gif")));
-		imgReg.put("expandall", ImageDescriptor.createFromURL(b.getEntry("icons/expandall.gif")));
-		imgReg.put("refresh", ImageDescriptor.createFromURL(b.getEntry("icons/refresh.gif")));
+		imgReg.put(ICON_COLLAPSEALL, ImageDescriptor.createFromURL(b.getEntry(ICON_COLLAPSEALL)));
+		imgReg.put(ICON_EXPANDALL, ImageDescriptor.createFromURL(b.getEntry(ICON_EXPANDALL)));
+		imgReg.put(ICON_REFRESH, ImageDescriptor.createFromURL(b.getEntry(ICON_REFRESH)));
 	}
 
 	/**
@@ -96,7 +96,7 @@ public class ContextSpyPart
 		comp.setLayout(new GridLayout(6, false));
 
 		Button refreshButton = new Button(comp, SWT.FLAT);
-		refreshButton.setImage(imgReg.get("refresh"));
+		refreshButton.setImage(imgReg.get(ICON_REFRESH));
 		refreshButton.setToolTipText("Refresh the contexts");
 		refreshButton.addSelectionListener(new SelectionListener()
 			{
@@ -114,7 +114,7 @@ public class ContextSpyPart
 			});
 
 		Button expandAll = new Button(comp, SWT.FLAT);
-		expandAll.setImage(imgReg.get("expandall"));
+		expandAll.setImage(imgReg.get(ICON_EXPANDALL));
 		expandAll.setToolTipText("Expand context nodes");
 		expandAll.addSelectionListener(new SelectionListener()
 			{
@@ -131,7 +131,7 @@ public class ContextSpyPart
 				}
 			});
 		Button collapseAll = new Button(comp, SWT.FLAT);
-		collapseAll.setImage(imgReg.get("collapseall"));
+		collapseAll.setImage(imgReg.get(ICON_COLLAPSEALL));
 		collapseAll.setToolTipText("Collapse context nodes");
 		collapseAll.addSelectionListener(new SelectionListener()
 			{

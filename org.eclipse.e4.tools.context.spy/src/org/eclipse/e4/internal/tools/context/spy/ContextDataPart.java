@@ -121,7 +121,8 @@ public class ContextDataPart
 	@Optional
 	public void listenToContext(@Named(IServiceConstants.ACTIVE_SELECTION) EclipseContext ctx)
 	{
-		if (ctx == null)
+		// Must check if dataviewer is created or not (when we reopen the window @postconstruct has not been called yet) 
+		if ((ctx == null) || (contextDataViewer == null))
 		{
 			return;
 		}
